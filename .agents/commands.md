@@ -300,7 +300,7 @@ bash tool/hooks/test.sh
 flutter pub get
 dart format --output=none --set-exit-if-changed lib test tool plugins setup.dart
 flutter analyze --no-fatal-infos
-dart run tool/changelog.dart verify   # main and tags only
+dart run tool/changelog.dart verify --snapshot-only
 dart run tool/test.dart -- --reporter expanded --coverage
 dart run tool/check_coverage.dart coverage/lcov.info 75
 ```

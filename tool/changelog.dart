@@ -29,7 +29,14 @@ Future<void> main(List<String> arguments) async {
     ..addOption('tag', help: 'Version tag to render, defaults to the newest.')
     ..addOption('out', help: 'Output file, defaults to stdout.');
 
-  parser.addCommand('verify');
+  parser
+      .addCommand('verify')
+      .addFlag(
+        'snapshot-only',
+        negatable: false,
+        help:
+            'Validate imported JSON/Markdown history without upstream Git tags.',
+      );
 
   final ArgResults results;
   try {
@@ -48,7 +55,7 @@ Future<void> main(List<String> arguments) async {
     'release' => _release(root, command),
     'build' => _build(root, command),
     'render' => _render(root, command),
-    'verify' => _verify(root),
+    'verify' => _verify(root, snapshotOnly: command.flag('snapshot-only')),
     _ => _fail(_usage(parser)),
   };
   exit(exitCodeValue);
@@ -143,7 +150,7 @@ int _render(String root, ArgResults command) {
   return 0;
 }
 
-int _verify(String root) {
+int _verify(String root, {required bool snapshotOnly}) {
   final dataFile = resolve(root, changelogDataPath);
   final markdownFile = resolve(root, changelogMarkdownPath);
   final problems = <String>[];
@@ -163,6 +170,17 @@ int _verify(String root) {
       '$changelogMarkdownPath does not match $changelogDataPath; '
       'run tool/changelog.dart release to regenerate it',
     );
+  }
+
+  if (snapshotOnly) {
+    if (problems.isEmpty) {
+      stdout.writeln('Imported changelog JSON and Markdown are consistent.');
+      return 0;
+    }
+    for (final problem in problems) {
+      stderr.writeln('✗ $problem');
+    }
+    return 1;
   }
 
   final git = Git(workingDirectory: root);
@@ -273,7 +291,7 @@ Commands:
   release --version X   Rewrite CHANGELOG.md and changelog.json.
   build [--unreleased]  Rewrite changelog.json only.
   render <release|telegram> [--tag vX] [--out file]
-  verify                Check the committed changelog against git.
+  verify [--snapshot-only] Check recorded history, optionally against git.
 
 ${parser.usage}''';
 

@@ -11,6 +11,9 @@
 - 稳定标签（例如 `v0.9.4`）：同时生成两架构 Linux bundle、AUR 源码包及 `SHA256SUMS`。
 - 预发布标签（例如 `v0.9.5-pre.1`）：`pubspec.yaml` 必须先写为 `0.9.5-pre.1+构建号`，不会生成稳定版 AUR 包。
 
+上游 `CHANGELOG.md`/`changelog.json` 作为导入历史快照保留，CI 使用 `verify --snapshot-only` 校验二者一致性；
+本分支的发行说明来自 `.github/release_notes.md`，不依赖上游 Git 标签是否存在。
+
 | 平台 | 架构 | 产物 |
 | --- | --- | --- |
 | Android | arm64-v8a、armeabi-v7a、x86_64 | APK |
