@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/freecat/service.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'clash_config.dart';
@@ -137,7 +138,9 @@ extension ProfilesExt on List<Profile> {
 }
 
 extension ProfileExtension on Profile {
-  bool get realAutoUpdate => type == ProfileType.url && autoUpdate;
+  bool get isRemote => type == ProfileType.url || type == ProfileType.freecat;
+
+  bool get realAutoUpdate => isRemote && autoUpdate;
 
   String get realLabel => label.takeFirstValid([defaultLabel]);
 
@@ -159,7 +162,7 @@ extension ProfileExtension on Profile {
   Future<Profile?> checkAndUpdateAndCopy({
     required ValidateConfig validate,
   }) async {
-    if (type != ProfileType.url) {
+    if (!isRemote) {
       return null;
     }
     final mFile = await _getFile(false);
@@ -184,6 +187,9 @@ extension ProfileExtension on Profile {
   }
 
   Future<Profile> update({required ValidateConfig validate}) async {
+    if (type == ProfileType.freecat) {
+      return freecatService.update(this, validate: validate);
+    }
     final response = await request.getFileResponseForUrl(url);
     final disposition = response.headers.value('content-disposition');
     final userinfo = response.headers.value('subscription-userinfo');

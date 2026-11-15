@@ -21,8 +21,18 @@ void main() {
       expect(results['env'], 'dev');
     });
 
-    test('Flutter build environment does not depend on Core SHA256', () {
-      expect(setup.createBuildEnvironment('dev'), {'APP_ENV': 'dev'});
+    test('builds point updates at the repository that produced them', () {
+      expect(setup.createBuildEnvironment('dev', repository: 'owner/fork'), {
+        'APP_ENV': 'dev',
+        'APP_REPOSITORY': 'owner/fork',
+      });
+      expect(
+        () => setup.createBuildEnvironment(
+          'stable',
+          repository: 'https://example.com',
+        ),
+        throwsArgumentError,
+      );
     });
 
     test('omits verbose from flutter build args by default', () {

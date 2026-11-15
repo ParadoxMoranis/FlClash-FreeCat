@@ -7,6 +7,7 @@ import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/profiles/custom/custom.dart';
+import 'package:fl_clash/views/profiles/freecat.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -145,6 +146,14 @@ class AddProfileMenu extends ConsumerWidget {
             glyph: AppGlyphs.cloudDownload,
             label: appLocalizations.link,
             onPressed: () => _toAdd(context, ref),
+          ),
+          PopupMenuItem(
+            glyph: AppGlyphs.cloudDownload,
+            label: appLocalizations.freecat,
+            onPressed: () => showFormSheet<void>(
+              context: context,
+              builder: (_) => const FreecatAccountView(),
+            ),
           ),
           if (system.isTV)
             PopupMenuItem(

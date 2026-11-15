@@ -243,63 +243,23 @@ emulator validation; Kotlin compilation cannot prove those system callbacks.
 
 ## Changelog And Release
 
-The changelog is derived from Conventional Commits by `tool/changelog.dart` and written to two committed files:
-`CHANGELOG.md` for readers and `changelog.json` for the renderers. See `.agents/rules.md` for the `Changelog:` trailers
-that decide the wording.
+This fork publishes through the current repository's GitHub Actions workflow. The canonical release and AUR
+instructions are in `RELEASING.md`; the imported upstream changelog remains as historical attribution.
 
-The app ships no changelog of its own. `render release` appends the released version as JSON inside an HTML comment
-(`<!-- flclash:changelog:json … -->`), so the release body GitHub already returns to `checkForUpdate` carries the
-notes shown in the update dialog. `parseReleaseChangelog` reads that block and falls back to the English
-bullets when a release predates it.
+Commit the desired `pubspec.yaml` version first, then use:
 
 ```bash
-dart run tool/changelog.dart verify                  # what CI checks
-dart run tool/changelog.dart release --version 0.8.96
-dart run tool/changelog.dart build --unreleased      # changelog.json only, includes untagged work
-dart run tool/changelog.dart render release --out release.md
-dart run tool/changelog.dart render telegram --out telegram.md
+tool/release.sh --dry-run
+tool/release.sh --push
 ```
 
-Releasing a stable version, in order:
+The helper creates a lightweight `v<pubspec version>` tag and optionally pushes the current branch and tag.
+It does not rewrite files or create commits. Stable tags publish a GitHub Release, Linux bundle archives,
+`SHA256SUMS`, and the generated AUR source package. Prerelease tags require the exact same suffix in pubspec
+and publish a GitHub prerelease without an AUR package. Branch pushes upload test packages as Actions artifacts.
 
-```bash
-tool/bump_version.sh all
-dart run tool/changelog.dart release --version 0.8.96
-git commit -am "chore(release): v0.8.96"
-git tag v0.8.96
-git push origin main && git push origin v0.8.96
-```
-
-Push the tag by name. Every release tag here is lightweight, and `--follow-tags` carries annotated tags only: it skips a
-lightweight one silently, so the branch lands, the tag does not, and the release workflow never fires.
-
-`tool/release.sh` drives both paths so the ordering below cannot be got wrong by hand. It resolves the version (bumping
-the patch when pubspec still names an already tagged one), prints the notes the tag would ship, and only pushes with
-`--push`:
-
-```bash
-tool/release.sh pre --dry-run     # plan and notes, changes nothing
-tool/release.sh pre --push        # bump, tag vX.Y.Z-pre.N, push
-tool/release.sh stable --push     # changelog, chore(release) commit, tag, push
-```
-
-The release commit comes before the tag on purpose: the generated wording is reviewable in the diff before it ships, and
-the tag is what `render release` reads. CI never writes back to the repository; it only runs `verify`. Wording in
-`changelog.json` may be edited by hand as long as no derivable entry disappears and every entry still points at a commit
-inside that version's range.
-
-Entries at or below `v0.8.96` are frozen: they predate the pipeline, live under the `<!-- changelog:frozen -->` marker
-in `CHANGELOG.md`, and are never regenerated.
-
-`verify` compares a version only when its tag is reachable from `HEAD`, because that is the same scope the builder walks
-(`git tag --merged`). A branch cut before the newest release cannot derive that version at all, so `verify` names it as
-skipped and moves on instead of reporting drift that does not exist. Checking mere tag existence is what made every such
-branch fail on an unrelated release.
-
-Prerelease tags (`v0.8.96-pre.N`) skip the release commit, and CI renders their notes with `build --unreleased` for the
-Telegram post. They publish no GitHub release, so the update dialog never sees them. `build --unreleased` reads the
-version from `pubspec.yaml` rather than the tag, so the patch has to be bumped before the first `-pre.N` of a cycle:
-while `v<pubspec version>` is still tagged it refuses to collect anything and the release job fails.
+`tool/changelog.dart` can still maintain the imported history; no Telegram, Homebrew or F-Droid credentials
+are required by this fork's workflow. Release publishing waits for every required check and package job.
 
 ### Website
 
@@ -332,8 +292,7 @@ release matrix in `build.yaml`, so a renamed artifact needs the same change in `
 
 ## Verify
 
-In the public repository every branch push runs the `dart` job; in the private
-`origin` every check job runs only when started by hand (`workflow_dispatch`).
+Every branch push, pull request and manual run executes the check jobs.
 The `dart` job performs these root-package checks in order:
 
 ```bash
@@ -351,18 +310,10 @@ new hook script needs only its test file next to it, not a workflow step.
 
 Run `flutter analyze --no-fatal-infos` before committing; CI runs the same command and fails on a warning or error.
 
-Release builds run only for `v*` tag pushes; pull requests trigger nothing.
-Root analysis excludes `plugins/**`, and root tests do not discover nested
-plugin packages, so parallel jobs validate the rest from their own package
-directories: `plugins` (local Flutter packages and the setup build tool), `go`
-(the Core wrapper, plus a vet of the Android files), `android` (JVM unit tests
-for `:common`, `:service` and `:app`, with the Flutter compile tasks excluded
-and the gomobile AAR built for one ABI), `rust` (both crates), and a
-Windows runner for the helper's `windows-service` feature. On branch pushes a
-`desktop` job also compiles a debug build per desktop platform; a tag skips it,
-since its release matrix compiles the same native code. Release builds run only
-in the public repository and start alongside the checks; `upload` publishes
-only once every build and every check job passes.
+Branch pushes and manual runs build release packages for Android and both desktop architectures;
+pull requests run the check jobs only. Root analysis excludes `plugins/**`, and root tests do not discover
+nested plugin packages, so parallel jobs validate local Flutter plugins, Go, Android JVM code, Rust and
+the Windows helper. A `v*` tag publishes only once every build and check job passes.
 
 `bash tool/check_plugins.sh` is that plugin gate, and CI runs the same script.
 It discovers every `plugins/*/pubspec.yaml`, analyzes each package, and runs

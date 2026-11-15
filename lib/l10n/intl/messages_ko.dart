@@ -660,6 +660,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editSsid": MessageLookupByLibrary.simpleMessage("SSID 편집"),
     "editorUnavailable": MessageLookupByLibrary.simpleMessage("편집기를 사용할 수 없음"),
     "elapsed": MessageLookupByLibrary.simpleMessage("소요"),
+    "email": MessageLookupByLibrary.simpleMessage("이메일"),
     "emptyFallback": MessageLookupByLibrary.simpleMessage("빈 폴백"),
     "emptyTip": m26,
     "en": MessageLookupByLibrary.simpleMessage("영어"),
@@ -749,6 +750,52 @@ class MessageLookup extends MessageLookupByLibrary {
       "코어를 강제로 다시 시작하시겠습니까?",
     ),
     "fr": MessageLookupByLibrary.simpleMessage("프랑스어"),
+    "freecat": MessageLookupByLibrary.simpleMessage("FreeCat"),
+    "freecatAccountMissingTip": MessageLookupByLibrary.simpleMessage(
+      "저장된 FreeCat 계정이 없습니다. 이 구독을 복원하려면 다시 로그인하세요.",
+    ),
+    "freecatErrorCredentials": MessageLookupByLibrary.simpleMessage(
+      "이메일 또는 비밀번호가 올바르지 않습니다. 계정 정보를 확인하고 다시 시도하세요.",
+    ),
+    "freecatErrorDecoy": MessageLookupByLibrary.simpleMessage(
+      "FreeCat이 미끼 구독을 반환했습니다. 다시 로그인해 보세요.",
+    ),
+    "freecatErrorDecryption": MessageLookupByLibrary.simpleMessage(
+      "FreeCat 구독을 복호화할 수 없습니다. 서비스의 암호화 방식이 변경되었을 수 있습니다.",
+    ),
+    "freecatErrorExpired": MessageLookupByLibrary.simpleMessage(
+      "FreeCat 로그인 세션이 만료되었습니다. 다시 로그인하세요.",
+    ),
+    "freecatErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "FreeCat 작업에 실패했습니다. 다시 시도하세요.",
+    ),
+    "freecatErrorHttp": MessageLookupByLibrary.simpleMessage(
+      "FreeCat이 요청을 완료하지 못했습니다. 나중에 다시 시도하세요.",
+    ),
+    "freecatErrorInvalidHost": MessageLookupByLibrary.simpleMessage(
+      "경로, 쿼리, 계정 정보가 없는 올바른 HTTPS 호스트를 입력하세요.",
+    ),
+    "freecatErrorInvalidProfile": MessageLookupByLibrary.simpleMessage(
+      "FreeCat 구독이 올바른 프로필이 아닙니다. 기존 프로필은 유지되었습니다.",
+    ),
+    "freecatErrorInvalidResponse": MessageLookupByLibrary.simpleMessage(
+      "FreeCat의 응답을 읽을 수 없습니다. 나중에 다시 시도하세요.",
+    ),
+    "freecatErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "FreeCat에 연결할 수 없습니다. 네트워크를 확인하고 다시 시도하세요.",
+    ),
+    "freecatErrorStorage": MessageLookupByLibrary.simpleMessage(
+      "FreeCat 계정을 안전하게 읽거나 저장할 수 없습니다. 기기 잠금을 해제하고 다시 시도하세요.",
+    ),
+    "freecatHostTip": MessageLookupByLibrary.simpleMessage(
+      "호스트를 비워 두면 기본 FreeCat 호스트 세 곳을 자동으로 차례로 시도합니다.",
+    ),
+    "freecatPasswordTip": MessageLookupByLibrary.simpleMessage(
+      "비밀번호는 이번 로그인에만 사용되며 저장되지 않습니다.",
+    ),
+    "freecatReplaceAccountTip": MessageLookupByLibrary.simpleMessage(
+      "로그인하면 현재 프로필이 업데이트됩니다. 다른 계정을 사용해도 중복 프로필은 추가되지 않습니다.",
+    ),
     "general": MessageLookupByLibrary.simpleMessage("일반"),
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "여기에 추가한 항목은 모든 프로필의 해당 설정을 대체합니다. 추가하지 않은 항목은 프로필 자체 설정을 유지하며, 프로필에 없으면 코어 기본값을 사용합니다.",
@@ -1640,6 +1687,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "showPassword": MessageLookupByLibrary.simpleMessage("비밀번호 표시"),
     "sidebar": MessageLookupByLibrary.simpleMessage("사이드바"),
+    "signIn": MessageLookupByLibrary.simpleMessage("로그인"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("백그라운드 실행"),
     "singleImport": MessageLookupByLibrary.simpleMessage("개별 가져오기"),
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(

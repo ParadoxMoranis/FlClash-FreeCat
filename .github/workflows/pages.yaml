@@ -18,18 +18,21 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  SITE_REPOSITORY: ${{ github.repository }}
+  SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+
 jobs:
   tag:
-    # head_branch also names a branch push's branch, so only a tag at the built commit counts as a release.
+    # Audit site/ for upstream links and claims before opting in; see .github/release_notes.md.
     if: >-
-      github.repository == 'chen08209/FlClash' &&
+      vars.ENABLE_PAGES == 'true' &&
+      github.repository == 'ParadoxMoranis/FlClash-FreeCat' &&
       github.event_name == 'workflow_run' &&
       github.event.workflow_run.conclusion == 'success' &&
       startsWith(github.event.workflow_run.head_branch, 'v') &&
@@ -52,9 +55,14 @@ jobs:
   deploy:
     needs: tag
     if: >-
-      github.repository == 'chen08209/FlClash' &&
+      vars.ENABLE_PAGES == 'true' &&
+      github.repository == 'ParadoxMoranis/FlClash-FreeCat' &&
       !cancelled() &&
       (github.event_name != 'workflow_run' || needs.tag.outputs.stable == 'true')
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -62,6 +70,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - name: Assemble site
         env:

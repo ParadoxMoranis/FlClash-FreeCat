@@ -2,18 +2,18 @@
 
 <img src="assets/images/icon.png" alt="FlClash" width="88">
 
-# FlClash
+# FlClash-FreeCat
 
-基于 ClashMeta 的多平台代理客户端，简单易用，开源无广告。
+基于 [FlClash](https://github.com/chen08209/FlClash) 的社区分支，增加可选的自由猫专属订阅支持。
+普通订阅链接、本地配置、规则分流与 TUN 沿用 FlClash 的原有行为。本项目与自由猫服务方及 FlClash 上游维护者无隶属关系。
 
 [English](README.md) · **简体中文**
 
-[![Release](https://img.shields.io/github/v/release/chen08209/FlClash?style=flat-square&label=release)](https://github.com/chen08209/FlClash/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/chen08209/FlClash/total?style=flat-square&logo=github)](https://github.com/chen08209/FlClash/releases)
-[![License](https://img.shields.io/github/license/chen08209/FlClash?style=flat-square)](LICENSE)
-[![Telegram](https://img.shields.io/badge/Telegram-channel-26A5E4?style=flat-square&logo=telegram&logoColor=white)](https://t.me/FlClash)
+[![Build](https://github.com/ParadoxMoranis/FlClash-FreeCat/actions/workflows/build.yaml/badge.svg)](https://github.com/ParadoxMoranis/FlClash-FreeCat/actions/workflows/build.yaml)
+[![Release](https://img.shields.io/github/v/release/ParadoxMoranis/FlClash-FreeCat)](https://github.com/ParadoxMoranis/FlClash-FreeCat/releases)
+[![License](https://img.shields.io/github/license/ParadoxMoranis/FlClash-FreeCat)](LICENSE)
 
-[官网](https://chen08209.github.io/FlClash/zh) · [下载](#下载) · [更新日志](CHANGELOG.md) · [从源码构建](#从源码构建)
+[下载](#下载) · [GitHub 与 AUR 发布指南](RELEASING.md) · [从源码构建](#从源码构建)
 
 </div>
 
@@ -37,27 +37,16 @@
 
 ## 下载
 
-从 [GitHub Releases](https://github.com/chen08209/FlClash/releases/latest) 获取最新版本，或打开
-[官网](https://chen08209.github.io/FlClash/zh#download)，它会自动为你的设备选好安装包。
+本分支安装包在 [GitHub Releases](https://github.com/ParadoxMoranis/FlClash-FreeCat/releases) 下载。
+每次分支推送也会在对应的 [Actions 运行记录](https://github.com/ParadoxMoranis/FlClash-FreeCat/actions/workflows/build.yaml) 中提供测试构件。
 
 | 平台 | 安装包 | 说明 |
 | --- | --- | --- |
-| Android | `arm64-v8a`、`armeabi-v7a`、`x86_64` 三种 APK | 绝大多数手机选 `arm64-v8a`。也可以通过下方的 F-Droid 仓库安装。 |
+| Android | `arm64-v8a`、`armeabi-v7a`、`x86_64` 三种 APK | 绝大多数手机选 `arm64-v8a`；后续更新需使用相同签名密钥。 |
 | Windows 10 及以上 | 安装版（`.exe`）或便携版（`.zip`），分 x64 与 ARM64 | 骁龙等 ARM 架构笔记本选 ARM64。 |
-| macOS 12 及以上 | Apple Silicon 与 Intel 两种 DMG | 也可以通过 Homebrew 安装。 |
-| Linux | `.deb`、`.rpm` 和 AppImage，分 x64 与 ARM64 | 托盘依赖见下方说明。 |
+| macOS 12 及以上 | Apple Silicon 与 Intel 两种 DMG | 未签名构建可能需在“隐私与安全性”中允许运行。 |
+| Linux | `.deb`、`.rpm`、AppImage 与 `.tar.gz`，分 x64 与 ARM64 | 稳定版额外提供校验和锁定的 AUR 源码包。 |
 
-<p>
-  <a href="https://chen08209.github.io/FlClash-fdroid-repo/repo?fingerprint=789D6D32668712EF7672F9E58DEEB15FBD6DCEEC5AE7A4371EA72F2AAE8A12FD"><img alt="Get it on F-Droid" src="snapshots/get-it-on-fdroid.svg" height="56"></a>
-  <a href="https://github.com/chen08209/FlClash/releases/latest"><img alt="Get it on GitHub" src="snapshots/get-it-on-github.svg" height="56"></a>
-</p>
-
-**Homebrew**
-
-```bash
-brew tap chen08209/tap
-brew install --cask flclash
-```
 
 **Linux 托盘图标**
 
@@ -81,6 +70,14 @@ FlClash 要在免责声明被接受后才会启动核心。在容器等无人点
 clash://install-config?url=<经过 URL 编码的订阅链接>
 ```
 
+**自由猫订阅（附加功能）。** 在 **配置 → 添加 → 自由猫** 中输入自己的邮箱和密码。主机留空会依次尝试
+内置面板入口，也可填写自定义 HTTPS 面板。密码仅用于本次登录；token 和订阅地址保存在系统安全存储中。
+普通链接和文件导入继续使用原有流程。
+
+刷新和自动更新沿用现有配置控件。重新登录或切换账号时，在该配置的右键或长按菜单中选择 **自由猫**，
+更新同一份配置并保留节点选择。在其他设备恢复备份后需重新登录；导出的配置 YAML 仍含节点凭证。
+Linux 登录前需要解锁 GNOME Keyring、KWallet 等 Secret Service 密钥环。
+
 **Android 自动化。** Tasker、MacroDroid 等应用可以用下面的 Action 启动 Activity，从而启动、停止或切换代理：
 
 ```text
@@ -101,8 +98,8 @@ adb shell am start -a com.follow.clash.action.TOGGLE
 以及通过 rustup 安装的 [Rust](https://rustup.rs/)。桌面端需要在对应系统上构建，Android 在任意系统上都能构建。
 
 ```bash
-git clone --recursive https://github.com/chen08209/FlClash.git
-cd FlClash
+git clone --recursive https://github.com/ParadoxMoranis/FlClash-FreeCat.git
+cd FlClash-FreeCat
 flutter pub get
 dart setup.dart android   # 或 windows、macos、linux
 ```
@@ -120,16 +117,10 @@ dart setup.dart android   # 或 windows、macos、linux
 
 ## 支持
 
-给仓库点一个 Star 是支持项目最简单的方式。问题讨论和更新通知请关注 [Telegram 频道](https://t.me/FlClash)，
-Bug 与功能建议请提交到 [GitHub Issues](https://github.com/chen08209/FlClash/issues)。
-
-<a href="https://star-history.com/#chen08209/FlClash&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=chen08209/FlClash&type=Date&theme=dark">
-    <img alt="Star history" src="https://api.star-history.com/svg?repos=chen08209/FlClash&type=Date" width="640">
-  </picture>
-</a>
+本分支的问题请提交到 [GitHub Issues](https://github.com/ParadoxMoranis/FlClash-FreeCat/issues)。
+请勿附带密码、token、订阅地址或完整节点配置。
 
 ## 许可证
 
-FlClash 以 [GPL-3.0 协议](LICENSE)发布。
+FlClash-FreeCat 以 [GPL-3.0 协议](LICENSE)发布。FlClash 及第三方组件保留原有版权和许可证声明，
+来源与基线见 [UPSTREAM.md](UPSTREAM.md)。

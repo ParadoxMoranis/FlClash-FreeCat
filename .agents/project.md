@@ -16,12 +16,10 @@ FlClash is a multi-platform proxy client based on ClashMeta (mihomo), built with
 
 ## Forked Dependencies
 
-One `pubspec.yaml` dependency is pinned to a fork by commit SHA. The fork lives
-under `chen08209`, the same account that owns this repository, so it is
-maintained in-house rather than tracked from a third party: advancing a pin is a
-local decision, and there is no external maintainer to wait on for the patch
-itself. What the fork still waits on is the *upstream* fix that would let the pin
-be dropped entirely, recorded below.
+One `pubspec.yaml` dependency is pinned to a fork by commit SHA under the upstream
+`chen08209` account. This independent repository preserves that reviewed pin; it does
+not own the dependency fork. The upstream fixes that would allow dropping it are
+recorded below.
 
 Each entry records what the fork changes and what has to be true before it can go
 back to the published package, so a future upgrade does not have to rediscover it.

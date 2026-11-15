@@ -616,6 +616,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editSsid": MessageLookupByLibrary.simpleMessage("编辑SSID"),
     "editorUnavailable": MessageLookupByLibrary.simpleMessage("编辑器不可用"),
     "elapsed": MessageLookupByLibrary.simpleMessage("耗时"),
+    "email": MessageLookupByLibrary.simpleMessage("邮箱"),
     "emptyFallback": MessageLookupByLibrary.simpleMessage("空组兜底"),
     "emptyTip": m26,
     "en": MessageLookupByLibrary.simpleMessage("英语"),
@@ -699,6 +700,50 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "forceRestartCoreTip": MessageLookupByLibrary.simpleMessage("您确定要强制重启核心吗？"),
     "fr": MessageLookupByLibrary.simpleMessage("法语"),
+    "freecat": MessageLookupByLibrary.simpleMessage("自由猫"),
+    "freecatAccountMissingTip": MessageLookupByLibrary.simpleMessage(
+      "没有可用的自由猫账号记录，请重新登录以恢复此订阅。",
+    ),
+    "freecatErrorCredentials": MessageLookupByLibrary.simpleMessage(
+      "邮箱或密码不正确，请检查后重试。",
+    ),
+    "freecatErrorDecoy": MessageLookupByLibrary.simpleMessage(
+      "自由猫返回了诱饵订阅，请尝试重新登录。",
+    ),
+    "freecatErrorDecryption": MessageLookupByLibrary.simpleMessage(
+      "无法解密自由猫订阅，服务方可能已更换加密方式。",
+    ),
+    "freecatErrorExpired": MessageLookupByLibrary.simpleMessage(
+      "自由猫登录已过期，请重新登录。",
+    ),
+    "freecatErrorGeneric": MessageLookupByLibrary.simpleMessage("自由猫操作失败，请重试。"),
+    "freecatErrorHttp": MessageLookupByLibrary.simpleMessage(
+      "自由猫暂时无法完成请求，请稍后重试。",
+    ),
+    "freecatErrorInvalidHost": MessageLookupByLibrary.simpleMessage(
+      "请输入有效的 HTTPS 主机，不要包含路径、查询参数或账号信息。",
+    ),
+    "freecatErrorInvalidProfile": MessageLookupByLibrary.simpleMessage(
+      "自由猫订阅不是有效配置，原有配置已保留。",
+    ),
+    "freecatErrorInvalidResponse": MessageLookupByLibrary.simpleMessage(
+      "无法读取自由猫返回的内容，请稍后重试。",
+    ),
+    "freecatErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "无法连接自由猫，请检查网络后重试。",
+    ),
+    "freecatErrorStorage": MessageLookupByLibrary.simpleMessage(
+      "无法安全读取或保存自由猫账号，请解锁设备后重试。",
+    ),
+    "freecatHostTip": MessageLookupByLibrary.simpleMessage(
+      "主机留空时，自动依次尝试自由猫内置的三个入口。",
+    ),
+    "freecatPasswordTip": MessageLookupByLibrary.simpleMessage(
+      "密码仅用于本次登录，不会保存。",
+    ),
+    "freecatReplaceAccountTip": MessageLookupByLibrary.simpleMessage(
+      "登录将更新当前配置。可换用其他账号，不会新增重复配置。",
+    ),
     "general": MessageLookupByLibrary.simpleMessage("常规"),
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "添加的项会覆写所有配置的对应设置，未添加的项沿用配置自身的设置，配置未设置时使用内核默认值。",
@@ -1510,6 +1555,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "showPassword": MessageLookupByLibrary.simpleMessage("显示密码"),
     "sidebar": MessageLookupByLibrary.simpleMessage("侧边栏"),
+    "signIn": MessageLookupByLibrary.simpleMessage("登录"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("静默启动"),
     "singleImport": MessageLookupByLibrary.simpleMessage("单条导入"),
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(

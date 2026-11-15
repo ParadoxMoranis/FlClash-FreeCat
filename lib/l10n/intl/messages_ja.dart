@@ -670,6 +670,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editSsid": MessageLookupByLibrary.simpleMessage("SSIDを編集"),
     "editorUnavailable": MessageLookupByLibrary.simpleMessage("エディターを利用できません"),
     "elapsed": MessageLookupByLibrary.simpleMessage("所要時間"),
+    "email": MessageLookupByLibrary.simpleMessage("メールアドレス"),
     "emptyFallback": MessageLookupByLibrary.simpleMessage("空グループのフォールバック"),
     "emptyTip": m26,
     "en": MessageLookupByLibrary.simpleMessage("英語"),
@@ -759,6 +760,52 @@ class MessageLookup extends MessageLookupByLibrary {
       "コアを強制再起動してもよろしいですか？",
     ),
     "fr": MessageLookupByLibrary.simpleMessage("フランス語"),
+    "freecat": MessageLookupByLibrary.simpleMessage("FreeCat"),
+    "freecatAccountMissingTip": MessageLookupByLibrary.simpleMessage(
+      "保存された FreeCat アカウントがありません。この購読を復元するには、再度ログインしてください。",
+    ),
+    "freecatErrorCredentials": MessageLookupByLibrary.simpleMessage(
+      "メールアドレスまたはパスワードが正しくありません。確認して再試行してください。",
+    ),
+    "freecatErrorDecoy": MessageLookupByLibrary.simpleMessage(
+      "FreeCat がダミーの購読を返しました。再度ログインしてください。",
+    ),
+    "freecatErrorDecryption": MessageLookupByLibrary.simpleMessage(
+      "FreeCat の購読を復号できません。サービスの暗号化方式が変更された可能性があります。",
+    ),
+    "freecatErrorExpired": MessageLookupByLibrary.simpleMessage(
+      "FreeCat のログイン期限が切れました。再度ログインしてください。",
+    ),
+    "freecatErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "FreeCat の操作に失敗しました。再試行してください。",
+    ),
+    "freecatErrorHttp": MessageLookupByLibrary.simpleMessage(
+      "FreeCat がリクエストを完了できませんでした。しばらくしてから再試行してください。",
+    ),
+    "freecatErrorInvalidHost": MessageLookupByLibrary.simpleMessage(
+      "パス、クエリ、アカウント情報を含まない有効な HTTPS ホストを入力してください。",
+    ),
+    "freecatErrorInvalidProfile": MessageLookupByLibrary.simpleMessage(
+      "FreeCat の購読は有効なプロファイルではありません。既存のプロファイルは保持されました。",
+    ),
+    "freecatErrorInvalidResponse": MessageLookupByLibrary.simpleMessage(
+      "FreeCat の応答を読み取れませんでした。しばらくしてから再試行してください。",
+    ),
+    "freecatErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "FreeCat に接続できません。ネットワークを確認して再試行してください。",
+    ),
+    "freecatErrorStorage": MessageLookupByLibrary.simpleMessage(
+      "FreeCat アカウントを安全に読み込みまたは保存できません。デバイスのロックを解除して再試行してください。",
+    ),
+    "freecatHostTip": MessageLookupByLibrary.simpleMessage(
+      "ホストを空欄にすると、FreeCat の標準の 3 つの接続先を順に試します。",
+    ),
+    "freecatPasswordTip": MessageLookupByLibrary.simpleMessage(
+      "パスワードは今回のログインにのみ使われ、保存されません。",
+    ),
+    "freecatReplaceAccountTip": MessageLookupByLibrary.simpleMessage(
+      "ログインすると現在のプロファイルを更新します。別のアカウントを使っても、プロファイルは重複して作成されません。",
+    ),
     "general": MessageLookupByLibrary.simpleMessage("一般"),
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "ここで追加した項目は、すべてのプロファイルの該当設定を上書きします。追加していない項目はプロファイル自身の設定のままで、プロファイルにない場合はコアの既定値を使います。",
@@ -1670,6 +1717,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "showPassword": MessageLookupByLibrary.simpleMessage("パスワードを表示"),
     "sidebar": MessageLookupByLibrary.simpleMessage("サイドバー"),
+    "signIn": MessageLookupByLibrary.simpleMessage("ログイン"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("サイレント起動"),
     "singleImport": MessageLookupByLibrary.simpleMessage("個別インポート"),
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(

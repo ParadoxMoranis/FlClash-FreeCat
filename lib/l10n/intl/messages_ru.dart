@@ -825,6 +825,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Редактор недоступен",
     ),
     "elapsed": MessageLookupByLibrary.simpleMessage("Время"),
+    "email": MessageLookupByLibrary.simpleMessage("Эл. почта"),
     "emptyFallback": MessageLookupByLibrary.simpleMessage(
       "Резерв для пустой группы",
     ),
@@ -938,6 +939,52 @@ class MessageLookup extends MessageLookupByLibrary {
       "Вы уверены, что хотите принудительно перезапустить ядро?",
     ),
     "fr": MessageLookupByLibrary.simpleMessage("Французский"),
+    "freecat": MessageLookupByLibrary.simpleMessage("FreeCat"),
+    "freecatAccountMissingTip": MessageLookupByLibrary.simpleMessage(
+      "Сохранённая учётная запись FreeCat недоступна. Войдите снова, чтобы восстановить подписку.",
+    ),
+    "freecatErrorCredentials": MessageLookupByLibrary.simpleMessage(
+      "Неверная почта или пароль. Проверьте данные и повторите попытку.",
+    ),
+    "freecatErrorDecoy": MessageLookupByLibrary.simpleMessage(
+      "FreeCat вернул ложную подписку. Попробуйте войти снова.",
+    ),
+    "freecatErrorDecryption": MessageLookupByLibrary.simpleMessage(
+      "Не удалось расшифровать подписку FreeCat. Возможно, сервис изменил шифрование.",
+    ),
+    "freecatErrorExpired": MessageLookupByLibrary.simpleMessage(
+      "Сеанс FreeCat истёк. Войдите снова.",
+    ),
+    "freecatErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "Не удалось выполнить операцию FreeCat. Повторите попытку.",
+    ),
+    "freecatErrorHttp": MessageLookupByLibrary.simpleMessage(
+      "FreeCat не удалось выполнить запрос. Повторите попытку позже.",
+    ),
+    "freecatErrorInvalidHost": MessageLookupByLibrary.simpleMessage(
+      "Введите корректный HTTPS-хост без пути, параметров запроса и учётных данных.",
+    ),
+    "freecatErrorInvalidProfile": MessageLookupByLibrary.simpleMessage(
+      "Подписка FreeCat не является корректным профилем. Прежний профиль сохранён.",
+    ),
+    "freecatErrorInvalidResponse": MessageLookupByLibrary.simpleMessage(
+      "Не удалось прочитать ответ FreeCat. Повторите попытку позже.",
+    ),
+    "freecatErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "Не удалось подключиться к FreeCat. Проверьте соединение и повторите попытку.",
+    ),
+    "freecatErrorStorage": MessageLookupByLibrary.simpleMessage(
+      "Не удалось безопасно прочитать или сохранить учётную запись FreeCat. Разблокируйте устройство и повторите попытку.",
+    ),
+    "freecatHostTip": MessageLookupByLibrary.simpleMessage(
+      "Оставьте хост пустым, чтобы автоматически проверить три встроенных адреса FreeCat.",
+    ),
+    "freecatPasswordTip": MessageLookupByLibrary.simpleMessage(
+      "Пароль используется только для входа и не сохраняется.",
+    ),
+    "freecatReplaceAccountTip": MessageLookupByLibrary.simpleMessage(
+      "Вход обновит текущий профиль. Можно выбрать другую учётную запись без создания копии профиля.",
+    ),
     "general": MessageLookupByLibrary.simpleMessage("Общие"),
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "Добавленные здесь параметры заменяют соответствующие настройки всех профилей; остальные остаются такими, как в профиле, а если профиль их не задаёт, действуют значения ядра по умолчанию.",
@@ -2044,6 +2091,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "showPassword": MessageLookupByLibrary.simpleMessage("Показать пароль"),
     "sidebar": MessageLookupByLibrary.simpleMessage("Боковая панель"),
+    "signIn": MessageLookupByLibrary.simpleMessage("Войти"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("Тихий запуск"),
     "singleImport": MessageLookupByLibrary.simpleMessage("По одному"),
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(

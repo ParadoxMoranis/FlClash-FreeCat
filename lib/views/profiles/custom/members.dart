@@ -323,7 +323,7 @@ Map<String, String> _providerTypes(
   return {
     for (final profile in profiles)
       if (profile.type != ProfileType.custom)
-        profile.realLabel: profile.type == ProfileType.url
+        profile.realLabel: profile.isRemote
             ? appLocalizations.url
             : appLocalizations.file,
   };

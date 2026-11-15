@@ -57,6 +57,18 @@ void main() {
     );
   });
 
+  test('release downloads stay in the fork repository', () {
+    final uri = releaseAssetUri(
+      'v0.9.4',
+      'FlClash-0.9.4-android-arm64-v8a.apk',
+    );
+    expect(uri.host, 'github.com');
+    expect(
+      uri.path,
+      '/ParadoxMoranis/FlClash-FreeCat/releases/download/v0.9.4/FlClash-0.9.4-android-arm64-v8a.apk',
+    );
+  });
+
   group('releaseChecksum', () {
     const digest =
         'ff6a953c0f5c12e6bdc97b49428b565b64c4a62d85e50081823ba297407529b1';

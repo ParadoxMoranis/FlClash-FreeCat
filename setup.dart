@@ -124,8 +124,19 @@ List<String> createFlutterBuildArgs({
   return flutterBuildArgs;
 }
 
-Map<String, String> createBuildEnvironment(String env) {
-  return {'APP_ENV': env};
+Map<String, String> createBuildEnvironment(String env, {String? repository}) {
+  final source =
+      repository ??
+      Platform.environment['GITHUB_REPOSITORY'] ??
+      'ParadoxMoranis/FlClash-FreeCat';
+  if (!RegExp(r'^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$').hasMatch(source)) {
+    throw ArgumentError.value(
+      source,
+      'repository',
+      'Expected owner/repository',
+    );
+  }
+  return {'APP_ENV': env, 'APP_REPOSITORY': source};
 }
 
 /// Packages whose build hook `pubspec.yaml` turns into a no-op.
@@ -237,10 +248,14 @@ String _detectArch() {
 }
 
 Future<bool> _hasCommand(String cmd) async {
-  final which = Platform.isWindows ? 'where' : 'command';
-  final args = Platform.isWindows ? [cmd] : ['-v', cmd];
-  final result = await Process.run(which, args);
-  return result.exitCode == 0;
+  try {
+    final result = await Process.run(Platform.isWindows ? 'where' : 'which', [
+      cmd,
+    ]);
+    return result.exitCode == 0;
+  } on ProcessException {
+    return false;
+  }
 }
 
 Future<int> _ensureDependencies(String platform) async {
@@ -323,17 +338,30 @@ Future<int> _ensureLinuxDependencies() async {
   stdout.writeln('Downloading appimagetool...');
   final downloadName =
       'appimagetool-${appImageToolArch(_detectArch())}.AppImage';
-  final dlResult = await Process.run('wget', [
-    '-O',
-    appimagetool,
-    'https://github.com/AppImage/AppImageKit/releases/download/continuous/$downloadName',
-  ]);
-  if (dlResult.exitCode != 0) {
-    stderr.write(dlResult.stderr);
-    return dlResult.exitCode;
+  final temporary = await Directory.systemTemp.createTemp(
+    'flclash-appimagetool-',
+  );
+  final downloadPath = p.join(temporary.path, downloadName);
+  try {
+    final result = await Process.run('wget', [
+      '-O',
+      downloadPath,
+      'https://github.com/AppImage/AppImageKit/releases/download/continuous/$downloadName',
+    ]);
+    if (result.exitCode != 0) {
+      stderr.write(result.stderr);
+      return result.exitCode;
+    }
+    return await _runLinuxDependencyCommand([
+      'install',
+      '-m',
+      '755',
+      downloadPath,
+      appimagetool,
+    ]);
+  } finally {
+    await temporary.delete(recursive: true);
   }
-  await Process.run('chmod', ['+x', appimagetool]);
-  return 0;
 }
 
 String appImageToolArch(String arch) {

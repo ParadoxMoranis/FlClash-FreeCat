@@ -20,6 +20,10 @@ class ProfilesAction extends _$ProfilesAction {
   }
 
   Future<void> deleteProfile(int id) async {
+    final removed = ref.read(profilesProvider).getProfile(id);
+    if (removed?.type == ProfileType.freecat) {
+      await freecatService.removeAccount(id);
+    }
     await ref.read(profilesProvider.notifier).del(id);
     await clearEffect(id);
     final currentProfileId = ref.read(currentProfileIdProvider);
@@ -48,7 +52,7 @@ class ProfilesAction extends _$ProfilesAction {
       final isNotNeedUpdate = profile.lastUpdateDate
           ?.add(profile.autoUpdateDuration)
           .isBeforeNow;
-      if (isNotNeedUpdate == false || profile.type != ProfileType.url) {
+      if (isNotNeedUpdate == false || !profile.isRemote) {
         continue;
       }
       try {
@@ -63,6 +67,50 @@ class ProfilesAction extends _$ProfilesAction {
     ref.read(profilesProvider.notifier).put(profile);
     if (ref.read(currentProfileIdProvider) != null) return;
     ref.read(currentProfileIdProvider.notifier).value = profile.id;
+  }
+
+  Future<void> importFreecat({
+    required String email,
+    required String password,
+    String? host,
+    int? profileId,
+  }) async {
+    final existing = ref.read(profilesProvider).getProfile(profileId);
+    if (profileId != null && existing?.type != ProfileType.freecat) {
+      throw const FreecatException(FreecatFailure.invalidProfile);
+    }
+    final profile =
+        existing ??
+        Profile.normal(
+          label: currentAppLocalizations.freecat,
+        ).copyWith(type: ProfileType.freecat);
+    final updated = await freecatService.signIn(
+      profile,
+      email: email,
+      password: password,
+      host: host,
+      validate: (path, key) => _core.validateProfile(path, key),
+    );
+    final latest = ref.read(profilesProvider).getProfile(profile.id);
+    if (profileId != null && latest == null) {
+      await freecatService.removeAccount(profile.id);
+      await clearEffect(profile.id);
+      return;
+    }
+    putProfile(
+      (latest ?? updated).copyWith(
+        subscriptionInfo: updated.subscriptionInfo,
+        lastUpdateDate: updated.lastUpdateDate,
+        autoUpdateDuration: existing == null
+            ? updated.autoUpdateDuration
+            : latest?.autoUpdateDuration ?? existing.autoUpdateDuration,
+      ),
+    );
+    if (ref.read(currentProfileIdProvider) == profile.id) {
+      ref
+          .read(setupActionProvider.notifier)
+          .applyProfileDebounce(silence: true);
+    }
   }
 
   Future<List<Profile>> providerUsers(Profile profile) async {
@@ -130,7 +178,7 @@ class ProfilesAction extends _$ProfilesAction {
       for (final profile in ref.read(profilesProvider)) profile.id,
     ]) {
       final profile = ref.read(profilesProvider).getProfile(id);
-      if (profile == null || profile.type != ProfileType.url) continue;
+      if (profile == null || !profile.isRemote) continue;
       await updateProfile(profile, showLoading: true);
     }
   }

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=FlClash FreeCat
+Comment=FlClash with optional FreeCat subscriptions
+Exec=flclash %u
+Icon=flclash
+Terminal=false
+Categories=Network;
+Keywords=Clash;ClashMeta;Proxy;FreeCat;
+MimeType=x-scheme-handler/clash;x-scheme-handler/clashmeta;x-scheme-handler/flclash;
+StartupNotify=true
+StartupWMClass=com.follow.clash

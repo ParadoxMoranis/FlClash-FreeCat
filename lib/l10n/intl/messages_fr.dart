@@ -844,6 +844,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Éditeur indisponible",
     ),
     "elapsed": MessageLookupByLibrary.simpleMessage("Durée"),
+    "email": MessageLookupByLibrary.simpleMessage("E-mail"),
     "emptyFallback": MessageLookupByLibrary.simpleMessage("Repli si vide"),
     "emptyTip": m26,
     "en": MessageLookupByLibrary.simpleMessage("Anglais"),
@@ -957,6 +958,52 @@ class MessageLookup extends MessageLookupByLibrary {
       "Voulez-vous vraiment forcer le redémarrage du cœur ?",
     ),
     "fr": MessageLookupByLibrary.simpleMessage("Français"),
+    "freecat": MessageLookupByLibrary.simpleMessage("FreeCat"),
+    "freecatAccountMissingTip": MessageLookupByLibrary.simpleMessage(
+      "Aucun compte FreeCat enregistré n’est disponible. Reconnectez-vous pour restaurer cet abonnement.",
+    ),
+    "freecatErrorCredentials": MessageLookupByLibrary.simpleMessage(
+      "L’e-mail ou le mot de passe a été refusé. Vérifiez vos identifiants et réessayez.",
+    ),
+    "freecatErrorDecoy": MessageLookupByLibrary.simpleMessage(
+      "FreeCat a renvoyé un abonnement leurre. Essayez de vous reconnecter.",
+    ),
+    "freecatErrorDecryption": MessageLookupByLibrary.simpleMessage(
+      "L’abonnement FreeCat n’a pas pu être déchiffré. Le service a peut-être changé son chiffrement.",
+    ),
+    "freecatErrorExpired": MessageLookupByLibrary.simpleMessage(
+      "Votre session FreeCat a expiré. Reconnectez-vous.",
+    ),
+    "freecatErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "L’opération FreeCat a échoué. Réessayez.",
+    ),
+    "freecatErrorHttp": MessageLookupByLibrary.simpleMessage(
+      "FreeCat n’a pas pu traiter la demande. Réessayez plus tard.",
+    ),
+    "freecatErrorInvalidHost": MessageLookupByLibrary.simpleMessage(
+      "Saisissez un hôte HTTPS valide, sans chemin, paramètres ni identifiants.",
+    ),
+    "freecatErrorInvalidProfile": MessageLookupByLibrary.simpleMessage(
+      "L’abonnement FreeCat n’est pas un profil valide. Votre profil existant a été conservé.",
+    ),
+    "freecatErrorInvalidResponse": MessageLookupByLibrary.simpleMessage(
+      "La réponse de FreeCat est illisible. Réessayez plus tard.",
+    ),
+    "freecatErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "Connexion à FreeCat impossible. Vérifiez votre connexion et réessayez.",
+    ),
+    "freecatErrorStorage": MessageLookupByLibrary.simpleMessage(
+      "Impossible de lire ou d’enregistrer le compte FreeCat en toute sécurité. Déverrouillez votre appareil et réessayez.",
+    ),
+    "freecatHostTip": MessageLookupByLibrary.simpleMessage(
+      "Laissez l’hôte vide pour essayer automatiquement les trois hôtes FreeCat intégrés.",
+    ),
+    "freecatPasswordTip": MessageLookupByLibrary.simpleMessage(
+      "Votre mot de passe sert uniquement à la connexion et n’est jamais enregistré.",
+    ),
+    "freecatReplaceAccountTip": MessageLookupByLibrary.simpleMessage(
+      "La connexion met à jour ce profil. Vous pouvez utiliser un autre compte sans créer de doublon.",
+    ),
     "general": MessageLookupByLibrary.simpleMessage("Général"),
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "Les entrées ajoutées ici remplacent le réglage correspondant de tous les profils ; tout ce qui n’est pas ajouté garde le réglage du profil, ou la valeur par défaut du cœur si le profil n’en a pas.",
@@ -2105,6 +2152,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Afficher le mot de passe",
     ),
     "sidebar": MessageLookupByLibrary.simpleMessage("Barre latérale"),
+    "signIn": MessageLookupByLibrary.simpleMessage("Se connecter"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage(
       "Lancement silencieux",
     ),

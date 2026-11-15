@@ -168,7 +168,7 @@ class _ProfileDetailSheetState extends ConsumerState<ProfileDetailSheet>
     return Scaffold(
       title: profile.realLabel,
       iconActions: [
-        if (profile.type == ProfileType.url)
+        if (profile.isRemote)
           IconButtonData(
             glyph: AppGlyphs.sync,
             tooltip: appLocalizations.sync,

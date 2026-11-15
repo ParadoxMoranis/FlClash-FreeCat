@@ -79,3 +79,15 @@ devtools_options.yaml
 .fvm/
 .fvmrc
 /coverage/lcov.info
+
+# Local credentials and package build output
+*.jks
+*.keystore
+.env
+.env.*
+!.env.example
+*.pkg.tar.*
+__pycache__/
+*.pyc
+/packaging/aur/**/src/
+/packaging/aur/**/pkg/

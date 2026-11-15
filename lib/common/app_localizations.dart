@@ -3,6 +3,8 @@ import 'package:fl_clash/common/exception.dart';
 import 'package:fl_clash/common/network_error.dart';
 import 'package:fl_clash/core/desktop/launch_policy.dart';
 import 'package:fl_clash/core/method.dart';
+import 'package:fl_clash/features/freecat/errors.dart';
+import 'package:fl_clash/features/freecat/localization.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:flutter/widgets.dart';
 import 'package:prism_ui/l10n.dart';
@@ -112,6 +114,7 @@ String userFacingErrorMessage(Object error, AppLocalizations appLocalizations) {
   return networkErrorMessage(error, appLocalizations) ??
       coreLaunchBlockedMessage(error, appLocalizations) ??
       switch (error) {
+        FreecatException() => freecatErrorMessage(error, appLocalizations),
         AgeSecretKeyRequiredException() =>
           appLocalizations.ageSecretKeyRequiredTip,
         ReleaseNotVerifiedException() => appLocalizations.updateNotVerified,

@@ -791,6 +791,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Editor unavailable",
     ),
     "elapsed": MessageLookupByLibrary.simpleMessage("Took"),
+    "email": MessageLookupByLibrary.simpleMessage("Email"),
     "emptyFallback": MessageLookupByLibrary.simpleMessage("Empty fallback"),
     "emptyTip": m26,
     "en": MessageLookupByLibrary.simpleMessage("English"),
@@ -896,6 +897,52 @@ class MessageLookup extends MessageLookupByLibrary {
       "Are you sure you want to force restart the core?",
     ),
     "fr": MessageLookupByLibrary.simpleMessage("French"),
+    "freecat": MessageLookupByLibrary.simpleMessage("FreeCat"),
+    "freecatAccountMissingTip": MessageLookupByLibrary.simpleMessage(
+      "No saved FreeCat account is available. Sign in again to restore this subscription.",
+    ),
+    "freecatErrorCredentials": MessageLookupByLibrary.simpleMessage(
+      "The email or password was rejected. Check your account details and try again.",
+    ),
+    "freecatErrorDecoy": MessageLookupByLibrary.simpleMessage(
+      "FreeCat returned a decoy subscription. Try signing in again.",
+    ),
+    "freecatErrorDecryption": MessageLookupByLibrary.simpleMessage(
+      "The FreeCat subscription could not be decrypted. The service may have changed its encryption.",
+    ),
+    "freecatErrorExpired": MessageLookupByLibrary.simpleMessage(
+      "Your FreeCat session has expired. Sign in again.",
+    ),
+    "freecatErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "The FreeCat operation failed. Try again.",
+    ),
+    "freecatErrorHttp": MessageLookupByLibrary.simpleMessage(
+      "FreeCat could not complete the request. Try again later.",
+    ),
+    "freecatErrorInvalidHost": MessageLookupByLibrary.simpleMessage(
+      "Enter a valid HTTPS host without a path, query, or account details.",
+    ),
+    "freecatErrorInvalidProfile": MessageLookupByLibrary.simpleMessage(
+      "The FreeCat subscription is not a valid profile. Your existing profile was kept.",
+    ),
+    "freecatErrorInvalidResponse": MessageLookupByLibrary.simpleMessage(
+      "FreeCat returned an unreadable response. Try again later.",
+    ),
+    "freecatErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "Could not connect to FreeCat. Check your connection and try again.",
+    ),
+    "freecatErrorStorage": MessageLookupByLibrary.simpleMessage(
+      "Could not read or save the FreeCat account securely. Unlock your device and try again.",
+    ),
+    "freecatHostTip": MessageLookupByLibrary.simpleMessage(
+      "Leave Host empty to try the three built-in FreeCat hosts automatically.",
+    ),
+    "freecatPasswordTip": MessageLookupByLibrary.simpleMessage(
+      "Your password is used only to sign in and is never saved.",
+    ),
+    "freecatReplaceAccountTip": MessageLookupByLibrary.simpleMessage(
+      "Signing in updates this profile. You can use another account without adding a duplicate profile.",
+    ),
     "general": MessageLookupByLibrary.simpleMessage("General"),
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "Entries added here replace the setting of every profile; anything not added keeps the profile\'s own setting, or the core default when the profile has none.",
@@ -1946,6 +1993,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "showPassword": MessageLookupByLibrary.simpleMessage("Show password"),
     "sidebar": MessageLookupByLibrary.simpleMessage("Sidebar"),
+    "signIn": MessageLookupByLibrary.simpleMessage("Sign in"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("Silent launch"),
     "singleImport": MessageLookupByLibrary.simpleMessage("Single import"),
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(

@@ -8,6 +8,7 @@ import 'package:fl_clash/state.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/profiles/custom/custom.dart';
 import 'package:fl_clash/views/profiles/extend/extend.dart';
+import 'package:fl_clash/views/profiles/freecat.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -49,7 +50,7 @@ class _ProfilesViewState extends ConsumerState<ProfilesView> {
     final profilesAction = ref.read(profilesActionProvider.notifier);
     final List<UpdatingMessage> messages = [];
     final updateProfiles = profiles.map<Future>((profile) async {
-      if (profile.type != ProfileType.url) return;
+      if (!profile.isRemote) return;
       try {
         await profilesAction.updateProfile(profile, showLoading: true);
       } catch (e) {
@@ -307,7 +308,7 @@ class ProfileItem extends ConsumerWidget {
   }
 
   Future updateProfile(WidgetRef ref) async {
-    if (profile.type != ProfileType.url) return;
+    if (!profile.isRemote) return;
     await globalState.loadingRun(() async {
       await ref
           .read(profilesActionProvider.notifier)
@@ -323,7 +324,7 @@ class ProfileItem extends ConsumerWidget {
   }
 
   SubscriptionInfo? get _subscriptionInfo =>
-      profile.type == ProfileType.url ? profile.subscriptionInfo : null;
+      profile.isRemote ? profile.subscriptionInfo : null;
 
   String _subtitle(BuildContext context) {
     final info = _subscriptionInfo;
@@ -336,6 +337,7 @@ class ProfileItem extends ConsumerWidget {
       ProfileType.url => appLocalizations.remote,
       ProfileType.file => appLocalizations.local,
       ProfileType.custom => appLocalizations.custom,
+      ProfileType.freecat => appLocalizations.freecat,
     };
   }
 
@@ -407,6 +409,15 @@ class ProfileItem extends ConsumerWidget {
     final isUrl = profile.type == ProfileType.url;
     final isCustom = profile.type == ProfileType.custom;
     return [
+      if (profile.type == ProfileType.freecat)
+        PopupMenuItem(
+          glyph: AppGlyphs.edit,
+          label: appLocalizations.freecat,
+          onPressed: () => showFormSheet<void>(
+            context: context,
+            builder: (_) => FreecatAccountView(profileId: profile.id),
+          ),
+        ),
       PopupMenuItem(
         glyph: AppGlyphs.edit,
         label: appLocalizations.edit,
@@ -435,7 +446,7 @@ class ProfileItem extends ConsumerWidget {
             _handlePushGenProfilePage(context, profile.id);
           },
         ),
-      if (isUrl)
+      if (profile.isRemote)
         PopupMenuItem(
           glyph: AppGlyphs.sync,
           label: appLocalizations.sync,

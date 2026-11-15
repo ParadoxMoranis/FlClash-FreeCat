@@ -62,6 +62,7 @@ String _sourceOf(BuildContext context, ProfileType type) => switch (type) {
   ProfileType.url => context.appLocalizations.remote,
   ProfileType.file => context.appLocalizations.local,
   ProfileType.custom => context.appLocalizations.custom,
+  ProfileType.freecat => context.appLocalizations.freecat,
 };
 
 class ProfilesCard extends ConsumerWidget {
@@ -108,7 +109,7 @@ class ProfilesCard extends ConsumerWidget {
       (final text?, null) => Text(text, maxLines: 1, style: label),
       _ => null,
     };
-    final sync = profile != null && profile.type == ProfileType.url
+    final sync = profile != null && profile.isRemote
         ? _SyncButton(profile: profile)
         : null;
     final nameRow = Row(

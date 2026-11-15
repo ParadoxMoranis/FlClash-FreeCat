@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="sharedpref" path="FlClashFreecat.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureKeyStorage:FlClashFreecat.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureStorageConfiguration:FlClashFreecat.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="FlClashFreecat.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureKeyStorage:FlClashFreecat.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureStorageConfiguration:FlClashFreecat.xml" />
+    </device-transfer>
+</data-extraction-rules>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <exclude domain="sharedpref" path="FlClashFreecat.xml" />
+    <exclude domain="sharedpref" path="FlutterSecureKeyStorage:FlClashFreecat.xml" />
+    <exclude domain="sharedpref" path="FlutterSecureStorageConfiguration:FlClashFreecat.xml" />
+</full-backup-content>

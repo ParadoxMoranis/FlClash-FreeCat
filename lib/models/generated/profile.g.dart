@@ -88,6 +88,7 @@ const _$ProfileTypeEnumMap = {
   ProfileType.file: 'file',
   ProfileType.url: 'url',
   ProfileType.custom: 'custom',
+  ProfileType.freecat: 'freecat',
 };
 
 const _$ExtendTypeEnumMap = {

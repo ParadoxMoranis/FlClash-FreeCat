@@ -74,17 +74,17 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     if (labelError != null) {
       return (field: _ProfileField.label, message: labelError);
     }
-    if (widget.profile.type != ProfileType.url) {
+    if (!widget.profile.isRemote) {
       return null;
     }
     final url = _urlController.text;
-    if (url.isEmpty) {
+    if (widget.profile.type == ProfileType.url && url.isEmpty) {
       return (
         field: _ProfileField.url,
         message: appLocalizations.profileUrlNullValidationDesc,
       );
     }
-    if (!url.isUrl) {
+    if (widget.profile.type == ProfileType.url && !url.isUrl) {
       return (
         field: _ProfileField.url,
         message: appLocalizations.profileUrlInvalidValidationDesc,
@@ -142,7 +142,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
         current.url != profile.url ||
         current.ageSecretKey != profile.ageSecretKey;
     if (_fileData != null) {
-      if (profile.type == ProfileType.url && _autoUpdate) {
+      if (profile.isRemote && _autoUpdate) {
         final res = await dialogs.showMessage(
           title: appLocalizations.tip,
           message: TextSpan(text: appLocalizations.profileHasUpdate),
@@ -318,7 +318,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
           _AgeSecretKeyField(controller: _ageSecretKeyController),
         ],
       ),
-      if (isUrl)
+      if (widget.profile.isRemote)
         generateSection(
           items: [
             FormRow(

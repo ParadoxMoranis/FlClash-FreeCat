@@ -1,0 +1,8 @@
+post_remove() {
+  local unit=/etc/systemd/system/flclash-helper.service
+  if [[ -f "${unit}" ]] && grep -Fxq 'ExecStart="/usr/lib/flclash/FlClashHelperService"' "${unit}"; then
+    systemctl disable --now flclash-helper.service >/dev/null 2>&1 || true
+    rm -f -- "${unit}"
+    systemctl daemon-reload >/dev/null 2>&1 || true
+  fi
+}

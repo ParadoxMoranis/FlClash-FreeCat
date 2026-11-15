@@ -842,6 +842,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Editor no disponible",
     ),
     "elapsed": MessageLookupByLibrary.simpleMessage("Tardó"),
+    "email": MessageLookupByLibrary.simpleMessage("Correo electrónico"),
     "emptyFallback": MessageLookupByLibrary.simpleMessage(
       "Respaldo si está vacío",
     ),
@@ -959,6 +960,52 @@ class MessageLookup extends MessageLookupByLibrary {
       "¿Seguro que quieres forzar el reinicio del núcleo?",
     ),
     "fr": MessageLookupByLibrary.simpleMessage("Francés"),
+    "freecat": MessageLookupByLibrary.simpleMessage("FreeCat"),
+    "freecatAccountMissingTip": MessageLookupByLibrary.simpleMessage(
+      "No hay ninguna cuenta de FreeCat guardada. Inicia sesión de nuevo para restaurar esta suscripción.",
+    ),
+    "freecatErrorCredentials": MessageLookupByLibrary.simpleMessage(
+      "El correo o la contraseña no son correctos. Comprueba tus datos e inténtalo de nuevo.",
+    ),
+    "freecatErrorDecoy": MessageLookupByLibrary.simpleMessage(
+      "FreeCat devolvió una suscripción señuelo. Prueba a iniciar sesión de nuevo.",
+    ),
+    "freecatErrorDecryption": MessageLookupByLibrary.simpleMessage(
+      "No se pudo descifrar la suscripción de FreeCat. Es posible que el servicio haya cambiado su cifrado.",
+    ),
+    "freecatErrorExpired": MessageLookupByLibrary.simpleMessage(
+      "Tu sesión de FreeCat ha caducado. Inicia sesión de nuevo.",
+    ),
+    "freecatErrorGeneric": MessageLookupByLibrary.simpleMessage(
+      "La operación de FreeCat ha fallado. Inténtalo de nuevo.",
+    ),
+    "freecatErrorHttp": MessageLookupByLibrary.simpleMessage(
+      "FreeCat no pudo completar la solicitud. Inténtalo más tarde.",
+    ),
+    "freecatErrorInvalidHost": MessageLookupByLibrary.simpleMessage(
+      "Introduce un host HTTPS válido sin ruta, parámetros ni datos de cuenta.",
+    ),
+    "freecatErrorInvalidProfile": MessageLookupByLibrary.simpleMessage(
+      "La suscripción de FreeCat no es un perfil válido. Se ha conservado tu perfil anterior.",
+    ),
+    "freecatErrorInvalidResponse": MessageLookupByLibrary.simpleMessage(
+      "No se pudo leer la respuesta de FreeCat. Inténtalo más tarde.",
+    ),
+    "freecatErrorNetwork": MessageLookupByLibrary.simpleMessage(
+      "No se pudo conectar con FreeCat. Comprueba tu conexión e inténtalo de nuevo.",
+    ),
+    "freecatErrorStorage": MessageLookupByLibrary.simpleMessage(
+      "No se pudo leer o guardar la cuenta de FreeCat de forma segura. Desbloquea el dispositivo e inténtalo de nuevo.",
+    ),
+    "freecatHostTip": MessageLookupByLibrary.simpleMessage(
+      "Deja el host vacío para probar automáticamente los tres hosts integrados de FreeCat.",
+    ),
+    "freecatPasswordTip": MessageLookupByLibrary.simpleMessage(
+      "Tu contraseña solo se usa para iniciar sesión y nunca se guarda.",
+    ),
+    "freecatReplaceAccountTip": MessageLookupByLibrary.simpleMessage(
+      "Al iniciar sesión se actualiza este perfil. Puedes usar otra cuenta sin crear un perfil duplicado.",
+    ),
     "general": MessageLookupByLibrary.simpleMessage("General"),
     "generalOverrideDesc": MessageLookupByLibrary.simpleMessage(
       "Las entradas añadidas aquí sustituyen el ajuste correspondiente de todos los perfiles; lo que no añadas conserva el ajuste del propio perfil, o el valor predeterminado del núcleo si el perfil no lo define.",
@@ -2105,6 +2152,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "showPassword": MessageLookupByLibrary.simpleMessage("Mostrar contraseña"),
     "sidebar": MessageLookupByLibrary.simpleMessage("Barra lateral"),
+    "signIn": MessageLookupByLibrary.simpleMessage("Iniciar sesión"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("Inicio silencioso"),
     "singleImport": MessageLookupByLibrary.simpleMessage("Importar uno"),
     "singleShareLinkOnly": MessageLookupByLibrary.simpleMessage(

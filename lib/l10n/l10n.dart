@@ -9072,6 +9072,171 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `FreeCat`
+  String get freecat {
+    return Intl.message('FreeCat', name: 'freecat', desc: '', args: []);
+  }
+
+  /// `Email`
+  String get email {
+    return Intl.message('Email', name: 'email', desc: '', args: []);
+  }
+
+  /// `Sign in`
+  String get signIn {
+    return Intl.message('Sign in', name: 'signIn', desc: '', args: []);
+  }
+
+  /// `Leave Host empty to try the three built-in FreeCat hosts automatically.`
+  String get freecatHostTip {
+    return Intl.message(
+      'Leave Host empty to try the three built-in FreeCat hosts automatically.',
+      name: 'freecatHostTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No saved FreeCat account is available. Sign in again to restore this subscription.`
+  String get freecatAccountMissingTip {
+    return Intl.message(
+      'No saved FreeCat account is available. Sign in again to restore this subscription.',
+      name: 'freecatAccountMissingTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your password is used only to sign in and is never saved.`
+  String get freecatPasswordTip {
+    return Intl.message(
+      'Your password is used only to sign in and is never saved.',
+      name: 'freecatPasswordTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Signing in updates this profile. You can use another account without adding a duplicate profile.`
+  String get freecatReplaceAccountTip {
+    return Intl.message(
+      'Signing in updates this profile. You can use another account without adding a duplicate profile.',
+      name: 'freecatReplaceAccountTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a valid HTTPS host without a path, query, or account details.`
+  String get freecatErrorInvalidHost {
+    return Intl.message(
+      'Enter a valid HTTPS host without a path, query, or account details.',
+      name: 'freecatErrorInvalidHost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The email or password was rejected. Check your account details and try again.`
+  String get freecatErrorCredentials {
+    return Intl.message(
+      'The email or password was rejected. Check your account details and try again.',
+      name: 'freecatErrorCredentials',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your FreeCat session has expired. Sign in again.`
+  String get freecatErrorExpired {
+    return Intl.message(
+      'Your FreeCat session has expired. Sign in again.',
+      name: 'freecatErrorExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not connect to FreeCat. Check your connection and try again.`
+  String get freecatErrorNetwork {
+    return Intl.message(
+      'Could not connect to FreeCat. Check your connection and try again.',
+      name: 'freecatErrorNetwork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FreeCat could not complete the request. Try again later.`
+  String get freecatErrorHttp {
+    return Intl.message(
+      'FreeCat could not complete the request. Try again later.',
+      name: 'freecatErrorHttp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FreeCat returned an unreadable response. Try again later.`
+  String get freecatErrorInvalidResponse {
+    return Intl.message(
+      'FreeCat returned an unreadable response. Try again later.',
+      name: 'freecatErrorInvalidResponse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The FreeCat subscription could not be decrypted. The service may have changed its encryption.`
+  String get freecatErrorDecryption {
+    return Intl.message(
+      'The FreeCat subscription could not be decrypted. The service may have changed its encryption.',
+      name: 'freecatErrorDecryption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FreeCat returned a decoy subscription. Try signing in again.`
+  String get freecatErrorDecoy {
+    return Intl.message(
+      'FreeCat returned a decoy subscription. Try signing in again.',
+      name: 'freecatErrorDecoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The FreeCat subscription is not a valid profile. Your existing profile was kept.`
+  String get freecatErrorInvalidProfile {
+    return Intl.message(
+      'The FreeCat subscription is not a valid profile. Your existing profile was kept.',
+      name: 'freecatErrorInvalidProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not read or save the FreeCat account securely. Unlock your device and try again.`
+  String get freecatErrorStorage {
+    return Intl.message(
+      'Could not read or save the FreeCat account securely. Unlock your device and try again.',
+      name: 'freecatErrorStorage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The FreeCat operation failed. Try again.`
+  String get freecatErrorGeneric {
+    return Intl.message(
+      'The FreeCat operation failed. Try again.',
+      name: 'freecatErrorGeneric',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
