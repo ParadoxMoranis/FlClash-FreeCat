@@ -86,6 +86,10 @@ context menu and choose **FreeCat**; it updates that profile while retaining you
 another device requires signing in again. Exported profile YAML still contains node credentials. On Linux, unlock
 a Secret Service keyring such as GNOME Keyring or KWallet before signing in.
 
+FreeCat manual delay tests default to the official `http://cp.cloudflare.com/generate_204` endpoint. A user-selected
+test URL and timeout take precedence. Automatic group health checks keep the subscription's URLs and intervals.
+An HTTP delay result does not establish HTTPS connectivity; see [probe findings](FREECAT_PROBE_FINDINGS.md).
+
 **Automate on Android.** Tasker, MacroDroid and similar apps can start, stop or toggle the proxy by starting an
 activity with one of these actions:
 

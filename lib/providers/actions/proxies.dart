@@ -120,9 +120,8 @@ class ProxiesAction extends _$ProxiesAction {
             proxiesStyleSettingProvider.select((state) => state.sortType),
           );
           final delayMap = ref.read(delayDataSourceProvider);
-          final testUrl = ref.read(
-            patchClashConfigProvider.select((state) => state.testUrl),
-          );
+          final testUrl = ref.read(realTestUrlProvider());
+          final override = ref.read(manualTestUrlOverrideProvider);
           final selectedMap = ref.read(
             currentProfileProvider.select((state) => state?.selectedMap ?? {}),
           );
@@ -132,6 +131,7 @@ class ProxiesAction extends _$ProxiesAction {
               sortType: sortType,
               delayMap: delayMap,
               defaultTestUrl: testUrl,
+              testUrlOverride: override,
             );
           } catch (e) {
             commonPrint.log(
@@ -359,6 +359,7 @@ class ProxiesAction extends _$ProxiesAction {
     final selectedMap = ref.read(
       currentProfileProvider.select((state) => state?.selectedMap ?? {}),
     );
+    final override = ref.read(manualTestUrlOverrideProvider);
     final seen = <String>{};
     final targets = <_DelayTestTarget>[];
     for (final batch in batches) {
@@ -372,7 +373,8 @@ class ProxiesAction extends _$ProxiesAction {
         if (state.proxyName.isEmpty) {
           continue;
         }
-        final currentTestUrl = state.testUrl.takeFirstValid([fallbackTestUrl]);
+        final currentTestUrl =
+            override ?? state.testUrl.takeFirstValid([fallbackTestUrl]);
         final key = delayTestKey(currentTestUrl, state.proxyName);
         if (!seen.add(key)) {
           continue;

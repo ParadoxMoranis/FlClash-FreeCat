@@ -131,6 +131,42 @@ void main() {
     expect(proxies['Selector']['all'], ['Beta']);
   });
 
+  test(
+    'manual probe display override sorts without rewriting core groups',
+    () async {
+      const healthUrl = 'http://health.example/204';
+      const manualUrl = 'http://manual.example/204';
+      final proxies = <String, dynamic>{
+        'Auto': {
+          'name': 'Auto',
+          'type': 'URLTest',
+          'testUrl': healthUrl,
+          'all': ['A', 'B'],
+        },
+        'A': {'name': 'A', 'type': 'Trojan'},
+        'B': {'name': 'B', 'type': 'Trojan'},
+      };
+      final state = ComputeGroupsState(
+        proxiesData: ProxiesData(all: const ['Auto'], proxies: proxies),
+        sortType: ProxiesSortType.delay,
+        delayMap: const {
+          manualUrl: {'A': 90, 'B': 20},
+          healthUrl: {'A': 1, 'B': 200},
+        },
+        selectedMap: const {},
+        defaultTestUrl: manualUrl,
+        testUrlOverride: manualUrl,
+      );
+      final groups = await buildGroups(state);
+      expect(groups.single.testUrl, manualUrl);
+      expect(groups.single.all.map((node) => node.name), ['B', 'A']);
+      expect(proxies['Auto']['testUrl'], healthUrl);
+      final ordinary = await buildGroups(state.copyWith(testUrlOverride: null));
+      expect(ordinary.single.testUrl, healthUrl);
+      expect(ordinary.single.all.map((node) => node.name), ['A', 'B']);
+    },
+  );
+
   test('toGroupsTask returns empty data without proxies', () async {
     final groups = await toGroupsTask(
       const ComputeGroupsState(

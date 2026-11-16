@@ -171,6 +171,7 @@ extension type CoreController._(CoreHandlerInterface _interface)
     required DelayMap delayMap,
     required Map<String, String> selectedMap,
     required String defaultTestUrl,
+    String? testUrlOverride,
   }) async {
     final proxiesData = await _interface.getProxies();
     return toGroupsTask(
@@ -180,6 +181,7 @@ extension type CoreController._(CoreHandlerInterface _interface)
         delayMap: delayMap,
         selectedMap: selectedMap,
         defaultTestUrl: defaultTestUrl,
+        testUrlOverride: testUrlOverride,
       ),
     );
   }

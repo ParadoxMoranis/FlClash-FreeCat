@@ -89,7 +89,7 @@ final class CoreOptionsProvider
   }
 }
 
-String _$coreOptionsHash() => r'43945407c97ebce7e8106973f53ca83ce95c861a';
+String _$coreOptionsHash() => r'ef6f8c53ef8a3e12f78c37c96eebbcf5ee25a5ae';
 
 @ProviderFor(setupPatch)
 final setupPatchProvider = SetupPatchProvider._();
@@ -277,7 +277,7 @@ final class TrayDelaysProvider
   }
 }
 
-String _$trayDelaysHash() => r'e0c9bc51a20c911d9b4cbb6ee667f38e9b9218d5';
+String _$trayDelaysHash() => r'97f704e5d8bc6c3c2b3787e7d5fbb014bd8373aa';
 
 @ProviderFor(trayTitleState)
 final trayTitleStateProvider = TrayTitleStateProvider._();
@@ -2360,6 +2360,48 @@ final class CurrentGroupDelayTestingProvider
 String _$currentGroupDelayTestingHash() =>
     r'8eff21356efb7ad6b208b0badfc9081d94aa2fb4';
 
+@ProviderFor(manualTestUrlOverride)
+final manualTestUrlOverrideProvider = ManualTestUrlOverrideProvider._();
+
+final class ManualTestUrlOverrideProvider
+    extends $FunctionalProvider<String?, String?, String?>
+    with $Provider<String?> {
+  ManualTestUrlOverrideProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'manualTestUrlOverrideProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$manualTestUrlOverrideHash();
+
+  @$internal
+  @override
+  $ProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String? create(Ref ref) {
+    return manualTestUrlOverride(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$manualTestUrlOverrideHash() =>
+    r'2c112252b726c64a9dc9e7de475ba885a3e9516d';
+
 @ProviderFor(realTestUrl)
 final realTestUrlProvider = RealTestUrlFamily._();
 
@@ -2417,7 +2459,7 @@ final class RealTestUrlProvider
   }
 }
 
-String _$realTestUrlHash() => r'1e133ef3e72c2b04bc23f0fe9d33db0af94c9086';
+String _$realTestUrlHash() => r'bcc9d85487d65f30207853cc78c4c8816b863c43';
 
 final class RealTestUrlFamily extends $Family
     with $FunctionalFamilyOverride<String, String?> {
@@ -2493,7 +2535,7 @@ final class DelayProvider extends $FunctionalProvider<int?, int?, int?>
   }
 }
 
-String _$delayHash() => r'3cbaa758ea602519d2958a4e413c705b062bce32';
+String _$delayHash() => r'c0f8aa48049f5940fba6f7d4c2d42f67833cad5e';
 
 final class DelayFamily extends $Family
     with
@@ -2579,7 +2621,7 @@ final class DelayTestPhaseProvider
   }
 }
 
-String _$delayTestPhaseHash() => r'e757e70a0e180c01a4e660e1f16ce77a4547f4cf';
+String _$delayTestPhaseHash() => r'f0ce3c906617f26abebf8efad6da18aeeb53df14';
 
 final class DelayTestPhaseFamily extends $Family
     with

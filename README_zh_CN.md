@@ -78,6 +78,10 @@ clash://install-config?url=<经过 URL 编码的订阅链接>
 更新同一份配置并保留节点选择。在其他设备恢复备份后需重新登录；导出的配置 YAML 仍含节点凭证。
 Linux 登录前需要解锁 GNOME Keyring、KWallet 等 Secret Service 密钥环。
 
+自由猫来源的手动测速默认使用官方的 `http://cp.cloudflare.com/generate_204`；用户自定义测速 URL 和超时设置优先。
+自动选择/故障转移的健康检查保留订阅地址和周期。HTTP 延迟通过不代表所有 HTTPS 访问都可用，取证依据见
+[测速差异说明](FREECAT_PROBE_FINDINGS.md)。
+
 **Android 自动化。** Tasker、MacroDroid 等应用可以用下面的 Action 启动 Activity，从而启动、停止或切换代理：
 
 ```text

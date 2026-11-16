@@ -31,8 +31,9 @@ CoreOptions coreOptions(Ref ref) {
       ),
     ),
   );
+  final override = ref.watch(manualTestUrlOverrideProvider);
   return CoreOptions(
-    testUrl: testUrl,
+    testUrl: override ?? testUrl,
     skipCertVerify: !checkCertificate,
     delayTestTimeout: delayTestTimeout,
     mitmCapture: mitmFeature && mitmCapture,
@@ -126,21 +127,26 @@ Map<String, Map<String, int>> trayDelays(Ref ref) {
   final groups = ref.watch(currentGroupsStateProvider).value;
   final allGroups = ref.watch(groupsProvider);
   final selectedMap = ref.watch(selectedMapProvider);
-  final defaultTestUrl = ref.watch(
-    patchClashConfigProvider.select((state) => state.testUrl),
-  );
+  final override = ref.watch(manualTestUrlOverrideProvider);
   final delays = <String, Map<String, int>>{};
   for (final group in groups) {
-    final testUrl = group.testUrl.takeFirstValid([defaultTestUrl]);
+    final testUrl = ref.watch(realTestUrlProvider(group.testUrl));
     final groupDelays = <String, int>{};
     for (final proxy in group.all) {
-      final delay = computeProxyDelayState(
-        proxyName: proxy.name,
-        testUrl: testUrl,
-        groups: allGroups,
-        selectedMap: selectedMap,
-        delayMap: delayMap,
-      ).delay;
+      final delay = override == null
+          ? computeProxyDelayState(
+              proxyName: proxy.name,
+              testUrl: testUrl,
+              groups: allGroups,
+              selectedMap: selectedMap,
+              delayMap: delayMap,
+            ).delay
+          : delayMap[override]?[computeRealSelectedProxyState(
+                  proxy.name,
+                  groups: allGroups,
+                  selectedMap: selectedMap,
+                ).proxyName] ??
+                0;
       if (delay != 0) {
         groupDelays[proxy.name] = delay;
       }

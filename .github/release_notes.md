@@ -1,3 +1,12 @@
+## Changes in v0.9.5
+
+- FreeCat manual delay tests now default to the official HTTP Cloudflare endpoint. Group health checks keep their subscription URLs and intervals.
+- Requests, nested-group results, pending indicators, delay sorting and tray values use the same manual probe URL.
+- User-selected test URLs and timeouts take precedence; ordinary subscriptions retain their existing behavior.
+- Machine-local coding-tool settings and private capture artifacts are excluded from version control. Shared development rules remain versioned.
+
+An HTTP delay result does not prove HTTPS connectivity. This release aligns the probe definition and does not claim to fix every unavailable server or TLS failure.
+
 ## Downloads
 
 These packages are built from this independent FlClash-FreeCat repository. Choose the architecture for your device:

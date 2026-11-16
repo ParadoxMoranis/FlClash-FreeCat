@@ -178,7 +178,28 @@ bool currentGroupDelayTesting(Ref ref) {
 }
 
 @riverpod
+String? manualTestUrlOverride(Ref ref) {
+  final type = ref.watch(
+    currentProfileProvider.select((profile) => profile?.type),
+  );
+  if (type != ProfileType.freecat) return null;
+  final config = ref.watch(
+    patchClashConfigProvider.select(
+      (config) => (
+        url: config.testUrl,
+        picked: config.generalOverrideKeys.contains(GeneralOverrideKey.testUrl),
+      ),
+    ),
+  );
+  return config.picked || config.url != defaultTestUrl
+      ? config.url
+      : freecatManualTestUrl;
+}
+
+@riverpod
 String realTestUrl(Ref ref, [String? testUrl]) {
+  final override = ref.watch(manualTestUrlOverrideProvider);
+  if (override != null) return override;
   final currentTestUrl = ref.watch(
     patchClashConfigProvider.select((state) => state.testUrl),
   );
@@ -189,7 +210,9 @@ String realTestUrl(Ref ref, [String? testUrl]) {
 int? delay(Ref ref, {required String proxyName, String? testUrl}) {
   final currentTestUrl = ref.watch(realTestUrlProvider(testUrl));
   final proxyState = ref.watch(realSelectedProxyStateProvider(proxyName));
-  final effectiveTestUrl = proxyState.testUrl.takeFirstValid([currentTestUrl]);
+  final effectiveTestUrl =
+      ref.watch(manualTestUrlOverrideProvider) ??
+      proxyState.testUrl.takeFirstValid([currentTestUrl]);
   final effectiveProxyName = proxyState.proxyName;
   return ref.watch(
     delayDataSourceProvider.select(
@@ -206,7 +229,9 @@ DelayTestPhase? delayTestPhase(
 }) {
   final currentTestUrl = ref.watch(realTestUrlProvider(testUrl));
   final proxyState = ref.watch(realSelectedProxyStateProvider(proxyName));
-  final effectiveTestUrl = proxyState.testUrl.takeFirstValid([currentTestUrl]);
+  final effectiveTestUrl =
+      ref.watch(manualTestUrlOverrideProvider) ??
+      proxyState.testUrl.takeFirstValid([currentTestUrl]);
   final key = delayTestKey(effectiveTestUrl, proxyState.proxyName);
   return ref.watch(pendingDelayTestsProvider.select((state) => state[key]));
 }

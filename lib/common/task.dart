@@ -60,6 +60,9 @@ Future<List<Group>> buildGroups(ComputeGroupsState state) async {
     if (!GroupTypeExtension.valueList.contains(raw['type'])) continue;
     final memberNames = raw['all'];
     final group = Map<String, dynamic>.from(raw);
+    if (state.testUrlOverride case final url?) {
+      group['testUrl'] = url;
+    }
     group['all'] = memberNames is List
         ? memberNames.map((name) => proxies[name]).nonNulls.toList()
         : const [];

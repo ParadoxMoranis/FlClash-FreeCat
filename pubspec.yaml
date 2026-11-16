@@ -1,7 +1,7 @@
 name: fl_clash
 description: FlClash with optional FreeCat subscriptions, preserving standard Clash profiles.
 publish_to: 'none'
-version: 0.9.4+2026111501
+version: 0.9.5+2026111601
 environment:
   sdk: '>=3.10.0 <4.0.0'
 

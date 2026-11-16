@@ -5064,7 +5064,7 @@ $VpnOptionsCopyWith<$Res>? get vpnOptions {
 /// @nodoc
 mixin _$ComputeGroupsState {
 
- ProxiesData get proxiesData; ProxiesSortType get sortType; DelayMap get delayMap; Map<String, String> get selectedMap; String get defaultTestUrl;
+ ProxiesData get proxiesData; ProxiesSortType get sortType; DelayMap get delayMap; Map<String, String> get selectedMap; String get defaultTestUrl; String? get testUrlOverride;
 /// Create a copy of ComputeGroupsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -5076,20 +5076,20 @@ $ComputeGroupsStateCopyWith<ComputeGroupsState> get copyWith => _$ComputeGroupsS
 @override
 bool operator ==(Object other) {
   final _this = this as ComputeGroupsState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComputeGroupsState&&(identical(other.proxiesData, _this.proxiesData) || other.proxiesData == _this.proxiesData)&&(identical(other.sortType, _this.sortType) || other.sortType == _this.sortType)&&const DeepCollectionEquality().equals(other.delayMap, _this.delayMap)&&const DeepCollectionEquality().equals(other.selectedMap, _this.selectedMap)&&(identical(other.defaultTestUrl, _this.defaultTestUrl) || other.defaultTestUrl == _this.defaultTestUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComputeGroupsState&&(identical(other.proxiesData, _this.proxiesData) || other.proxiesData == _this.proxiesData)&&(identical(other.sortType, _this.sortType) || other.sortType == _this.sortType)&&const DeepCollectionEquality().equals(other.delayMap, _this.delayMap)&&const DeepCollectionEquality().equals(other.selectedMap, _this.selectedMap)&&(identical(other.defaultTestUrl, _this.defaultTestUrl) || other.defaultTestUrl == _this.defaultTestUrl)&&(identical(other.testUrlOverride, _this.testUrlOverride) || other.testUrlOverride == _this.testUrlOverride));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ComputeGroupsState;
-  return Object.hash(runtimeType,_this.proxiesData,_this.sortType,const DeepCollectionEquality().hash(_this.delayMap),const DeepCollectionEquality().hash(_this.selectedMap),_this.defaultTestUrl);
+  return Object.hash(runtimeType,_this.proxiesData,_this.sortType,const DeepCollectionEquality().hash(_this.delayMap),const DeepCollectionEquality().hash(_this.selectedMap),_this.defaultTestUrl,_this.testUrlOverride);
 }
 
 @override
 String toString() {
   final _this = this as ComputeGroupsState;
-  return 'ComputeGroupsState(proxiesData: ${_this.proxiesData}, sortType: ${_this.sortType}, delayMap: ${_this.delayMap}, selectedMap: ${_this.selectedMap}, defaultTestUrl: ${_this.defaultTestUrl})';
+  return 'ComputeGroupsState(proxiesData: ${_this.proxiesData}, sortType: ${_this.sortType}, delayMap: ${_this.delayMap}, selectedMap: ${_this.selectedMap}, defaultTestUrl: ${_this.defaultTestUrl}, testUrlOverride: ${_this.testUrlOverride})';
 }
 
 
@@ -5100,7 +5100,7 @@ abstract mixin class $ComputeGroupsStateCopyWith<$Res>  {
   factory $ComputeGroupsStateCopyWith(ComputeGroupsState value, $Res Function(ComputeGroupsState) _then) = _$ComputeGroupsStateCopyWithImpl;
 @useResult
 $Res call({
- ProxiesData proxiesData, ProxiesSortType sortType, DelayMap delayMap, Map<String, String> selectedMap, String defaultTestUrl
+ ProxiesData proxiesData, ProxiesSortType sortType, DelayMap delayMap, Map<String, String> selectedMap, String defaultTestUrl, String? testUrlOverride
 });
 
 
@@ -5117,14 +5117,15 @@ class _$ComputeGroupsStateCopyWithImpl<$Res>
 
 /// Create a copy of ComputeGroupsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? proxiesData = null,Object? sortType = null,Object? delayMap = null,Object? selectedMap = null,Object? defaultTestUrl = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? proxiesData = null,Object? sortType = null,Object? delayMap = null,Object? selectedMap = null,Object? defaultTestUrl = null,Object? testUrlOverride = freezed,}) {
   return _then(ComputeGroupsState(
 proxiesData: null == proxiesData ? _self.proxiesData : proxiesData // ignore: cast_nullable_to_non_nullable
 as ProxiesData,sortType: null == sortType ? _self.sortType : sortType // ignore: cast_nullable_to_non_nullable
 as ProxiesSortType,delayMap: null == delayMap ? _self.delayMap : delayMap // ignore: cast_nullable_to_non_nullable
 as DelayMap,selectedMap: null == selectedMap ? _self.selectedMap : selectedMap // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,defaultTestUrl: null == defaultTestUrl ? _self.defaultTestUrl : defaultTestUrl // ignore: cast_nullable_to_non_nullable
-as String,
+as String,testUrlOverride: freezed == testUrlOverride ? _self.testUrlOverride : testUrlOverride // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of ComputeGroupsState
@@ -5218,10 +5219,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ProxiesData proxiesData,  ProxiesSortType sortType,  DelayMap delayMap,  Map<String, String> selectedMap,  String defaultTestUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ProxiesData proxiesData,  ProxiesSortType sortType,  DelayMap delayMap,  Map<String, String> selectedMap,  String defaultTestUrl,  String? testUrlOverride)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ComputeGroupsState() when $default != null:
-return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMap,_that.defaultTestUrl);case _:
+return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMap,_that.defaultTestUrl,_that.testUrlOverride);case _:
   return orElse();
 
 }
@@ -5239,10 +5240,10 @@ return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMa
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ProxiesData proxiesData,  ProxiesSortType sortType,  DelayMap delayMap,  Map<String, String> selectedMap,  String defaultTestUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ProxiesData proxiesData,  ProxiesSortType sortType,  DelayMap delayMap,  Map<String, String> selectedMap,  String defaultTestUrl,  String? testUrlOverride)  $default,) {final _that = this;
 switch (_that) {
 case _ComputeGroupsState():
-return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMap,_that.defaultTestUrl);case _:
+return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMap,_that.defaultTestUrl,_that.testUrlOverride);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -5259,10 +5260,10 @@ return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMa
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ProxiesData proxiesData,  ProxiesSortType sortType,  DelayMap delayMap,  Map<String, String> selectedMap,  String defaultTestUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ProxiesData proxiesData,  ProxiesSortType sortType,  DelayMap delayMap,  Map<String, String> selectedMap,  String defaultTestUrl,  String? testUrlOverride)?  $default,) {final _that = this;
 switch (_that) {
 case _ComputeGroupsState() when $default != null:
-return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMap,_that.defaultTestUrl);case _:
+return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMap,_that.defaultTestUrl,_that.testUrlOverride);case _:
   return null;
 
 }
@@ -5274,7 +5275,7 @@ return $default(_that.proxiesData,_that.sortType,_that.delayMap,_that.selectedMa
 
 
 class _ComputeGroupsState implements ComputeGroupsState {
-  const _ComputeGroupsState({required this.proxiesData, required this.sortType, required  DelayMap delayMap, required  Map<String, String> selectedMap, required this.defaultTestUrl}): _delayMap = delayMap,_selectedMap = selectedMap;
+  const _ComputeGroupsState({required this.proxiesData, required this.sortType, required  DelayMap delayMap, required  Map<String, String> selectedMap, required this.defaultTestUrl, this.testUrlOverride}): _delayMap = delayMap,_selectedMap = selectedMap;
   
 
 @override final  ProxiesData proxiesData;
@@ -5294,6 +5295,7 @@ class _ComputeGroupsState implements ComputeGroupsState {
 }
 
 @override final  String defaultTestUrl;
+@override final  String? testUrlOverride;
 
 /// Create a copy of ComputeGroupsState
 /// with the given fields replaced by the non-null parameter values.
@@ -5305,18 +5307,18 @@ _$ComputeGroupsStateCopyWith<_ComputeGroupsState> get copyWith => __$ComputeGrou
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComputeGroupsState&&(identical(other.proxiesData, proxiesData) || other.proxiesData == proxiesData)&&(identical(other.sortType, sortType) || other.sortType == sortType)&&const DeepCollectionEquality().equals(other.delayMap, _delayMap)&&const DeepCollectionEquality().equals(other.selectedMap, _selectedMap)&&(identical(other.defaultTestUrl, defaultTestUrl) || other.defaultTestUrl == defaultTestUrl));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComputeGroupsState&&(identical(other.proxiesData, proxiesData) || other.proxiesData == proxiesData)&&(identical(other.sortType, sortType) || other.sortType == sortType)&&const DeepCollectionEquality().equals(other.delayMap, _delayMap)&&const DeepCollectionEquality().equals(other.selectedMap, _selectedMap)&&(identical(other.defaultTestUrl, defaultTestUrl) || other.defaultTestUrl == defaultTestUrl)&&(identical(other.testUrlOverride, testUrlOverride) || other.testUrlOverride == testUrlOverride));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,proxiesData,sortType,const DeepCollectionEquality().hash(_delayMap),const DeepCollectionEquality().hash(_selectedMap),defaultTestUrl);
+    return Object.hash(runtimeType,proxiesData,sortType,const DeepCollectionEquality().hash(_delayMap),const DeepCollectionEquality().hash(_selectedMap),defaultTestUrl,testUrlOverride);
 }
 
 @override
 String toString() {
-    return 'ComputeGroupsState(proxiesData: $proxiesData, sortType: $sortType, delayMap: $delayMap, selectedMap: $selectedMap, defaultTestUrl: $defaultTestUrl)';
+    return 'ComputeGroupsState(proxiesData: $proxiesData, sortType: $sortType, delayMap: $delayMap, selectedMap: $selectedMap, defaultTestUrl: $defaultTestUrl, testUrlOverride: $testUrlOverride)';
 }
 
 
@@ -5327,7 +5329,7 @@ abstract mixin class _$ComputeGroupsStateCopyWith<$Res> implements $ComputeGroup
   factory _$ComputeGroupsStateCopyWith(_ComputeGroupsState value, $Res Function(_ComputeGroupsState) _then) = __$ComputeGroupsStateCopyWithImpl;
 @override @useResult
 $Res call({
- ProxiesData proxiesData, ProxiesSortType sortType, DelayMap delayMap, Map<String, String> selectedMap, String defaultTestUrl
+ ProxiesData proxiesData, ProxiesSortType sortType, DelayMap delayMap, Map<String, String> selectedMap, String defaultTestUrl, String? testUrlOverride
 });
 
 
@@ -5344,14 +5346,15 @@ class __$ComputeGroupsStateCopyWithImpl<$Res>
 
 /// Create a copy of ComputeGroupsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? proxiesData = null,Object? sortType = null,Object? delayMap = null,Object? selectedMap = null,Object? defaultTestUrl = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? proxiesData = null,Object? sortType = null,Object? delayMap = null,Object? selectedMap = null,Object? defaultTestUrl = null,Object? testUrlOverride = freezed,}) {
   return _then(_ComputeGroupsState(
 proxiesData: null == proxiesData ? _self.proxiesData : proxiesData // ignore: cast_nullable_to_non_nullable
 as ProxiesData,sortType: null == sortType ? _self.sortType : sortType // ignore: cast_nullable_to_non_nullable
 as ProxiesSortType,delayMap: null == delayMap ? _self._delayMap : delayMap // ignore: cast_nullable_to_non_nullable
 as DelayMap,selectedMap: null == selectedMap ? _self._selectedMap : selectedMap // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,defaultTestUrl: null == defaultTestUrl ? _self.defaultTestUrl : defaultTestUrl // ignore: cast_nullable_to_non_nullable
-as String,
+as String,testUrlOverride: freezed == testUrlOverride ? _self.testUrlOverride : testUrlOverride // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

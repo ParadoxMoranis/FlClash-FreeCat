@@ -91,3 +91,17 @@ __pycache__/
 *.pyc
 /packaging/aur/**/src/
 /packaging/aur/**/pkg/
+
+# Machine-local coding tools and private reverse-engineering captures
+/.codex/
+/.claude/
+/.gemini/
+/.codegraph/
+/.mcp.json
+/opencode.jsonc
+/freecat-win-*/
+/freecat-win-*.zip
+*.dmp
+*.pcap
+*.pcapng
+*.har
