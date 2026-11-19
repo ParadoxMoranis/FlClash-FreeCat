@@ -1531,6 +1531,82 @@ void main() {
       expect(shownGroups(), ['Proxy']);
     });
 
+    test(
+      'existing FreeCat profiles receive TLS compatibility in the runtime config',
+      () async {
+        final profile = Profile.normal(
+          label: 'freecat',
+        ).copyWith(type: ProfileType.freecat);
+        final core = _MockCoreHandlerInterface();
+        when(() => core.readConfig(any())).thenAnswer(
+          (_) async => {
+            'proxies': [
+              {
+                'name': 'A',
+                'type': 'trojan',
+                'server': '203.0.113.1',
+                'port': 443,
+                'password': 'test',
+                'sni': 'example.com',
+                'skip-cert-verify': true,
+              },
+              {
+                'name': 'B',
+                'type': 'trojan',
+                'server': '203.0.113.2',
+                'port': 443,
+                'password': 'test',
+                'client-fingerprint': 'firefox',
+              },
+            ],
+            'rule': ['MATCH,DIRECT'],
+            'dns': {
+              'enable': true,
+              'nameserver': ['1.1.1.1'],
+            },
+          },
+        );
+        final scoped = ProviderContainer(
+          overrides: [
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(SetupAction.new),
+          ],
+        );
+        addTearDown(scoped.dispose);
+        final result = await scoped
+            .read(setupActionProvider.notifier)
+            .getProfile(
+              setupState: nullProfileSetupState.copyWith(
+                profileId: profile.id,
+                profileType: ProfileType.freecat,
+              ),
+              patchConfig: const PatchClashConfig(),
+            );
+        final config = loadYaml(result.yaml) as Map;
+        expect(result.base, isNull);
+        expect(config['proxies'][0]['client-fingerprint'], 'chrome120');
+        expect(config['proxies'][0]['server'], '203.0.113.1');
+        expect(config['proxies'][0]['sni'], 'example.com');
+        expect(config['proxies'][1]['client-fingerprint'], 'firefox');
+        expect(
+          config['global-ua'],
+          'freecatencua/v3.2.0 clash-verge Platform/windows',
+        );
+        expect(config['rules'], ['MATCH,DIRECT']);
+        final custom = await scoped
+            .read(setupActionProvider.notifier)
+            .getProfile(
+              setupState: nullProfileSetupState.copyWith(
+                profileId: profile.id,
+                profileType: ProfileType.freecat,
+              ),
+              patchConfig: const PatchClashConfig(globalUa: 'custom-client'),
+            );
+        expect((loadYaml(custom.yaml) as Map)['global-ua'], 'custom-client');
+        verifyNever(() => core.getProfileBase(any()));
+      },
+    );
+
     test('a profile file leaves its bulk sections in the Core and records '
         'what the Core was handed', () async {
       final profile = Profile.normal(label: 'p');

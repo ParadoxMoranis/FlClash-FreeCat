@@ -46,10 +46,15 @@ Every branch push also uploads test packages under the corresponding [Actions ru
 
 | Platform | Packages | Notes |
 | --- | --- | --- |
-| Android | APK for `arm64-v8a`, `armeabi-v7a` and `x86_64` | Most phones use `arm64-v8a`. Keep the same signing key for updates. |
-| Windows 10 and later | Installer (`.exe`) or portable `.zip`, for x64 and ARM64 | Pick ARM64 on Snapdragon and other ARM laptops. |
-| macOS 12 and later | DMG for Apple Silicon and Intel | Unsigned builds may require approval in Privacy & Security. |
+| Android | APK for `arm64-v8a`, `armeabi-v7a` and `x86_64` | Most phones use `arm64-v8a`. Without release keys, CI uses a temporary debug key and `com.follow.clash.dev`; updates may require uninstalling the previous APK. |
+| Windows 10 and later | Installer (`.exe`) or portable `.zip`, for x64 and ARM64 | Pick ARM64 on Snapdragon and other ARM laptops. Packages have no publisher code signature. |
+| macOS 12 and later | DMG for Apple Silicon and Intel | Ad-hoc signed without an Apple Developer certificate or notarization; Privacy & Security approval may be required. |
 | Linux | `.deb`, `.rpm`, AppImage and `.tar.gz`, for x64 and ARM64 | Stable releases also include a checksum-pinned AUR source package. |
+
+The release workflow works without signing secrets. It publishes only after the tag matches `pubspec.yaml` and all
+required checks and platform packages succeed. Release files include `SHA256SUMS` and `ANDROID-SIGNING.txt`.
+Android needs all four release-signing secrets for a persistent signing identity; temporary debug keys can change
+between builds. See the [release guide](RELEASING.md) for setup. CI builds check for updates in this fork's repository.
 
 
 **Linux tray icon**
@@ -86,9 +91,14 @@ context menu and choose **FreeCat**; it updates that profile while retaining you
 another device requires signing in again. Exported profile YAML still contains node credentials. On Linux, unlock
 a Secret Service keyring such as GNOME Keyring or KWallet before signing in.
 
-FreeCat manual delay tests default to the official `http://cp.cloudflare.com/generate_204` endpoint. A user-selected
-test URL and timeout take precedence. Automatic group health checks keep the subscription's URLs and intervals.
-An HTTP delay result does not establish HTTPS connectivity; see [probe findings](FREECAT_PROBE_FINDINGS.md).
+FreeCat manual delay tests default to the observed official 3.2.0 endpoint `http://cp.cloudflare.com/generate_204`
+and 5000 ms when no timeout has been saved. A user-selected test URL and timeout take precedence. Previously saved
+timeouts, including 8000 ms, remain unchanged; select 5000 ms manually for a strict comparison. Automatic group
+health checks keep the subscription's URLs and intervals. DNS and node fields retain the existing subscription and
+user override rules. FreeCat's default `global-ua` matches the observed 3.2.0 subscription User-Agent; an explicit
+`global-ua` is retained. The `chrome120` TLS default is this fork's compatibility choice; the evidence does not establish
+the official client's TLS fingerprint. An HTTP delay result does not establish HTTPS connectivity; see
+[probe findings](FREECAT_PROBE_FINDINGS.md).
 
 **Automate on Android.** Tasker, MacroDroid and similar apps can start, stop or toggle the proxy by starting an
 activity with one of these actions:
@@ -122,7 +132,7 @@ Packages land in `dist/`. The Go core and the Rust libraries are compiled as par
 
 | Platform | Also needed |
 | --- | --- |
-| Android | Android SDK with the NDK. Add `--arch arm64` to build a single ABI. |
+| Android | Android SDK with the NDK and JDK 17. Add `--arch arm64` to build a single ABI. |
 | Windows | GCC (MinGW-w64) for the core and [Inno Setup](https://jrsoftware.org/isinfo.php) 6 for the installer. |
 | macOS | Xcode and Node.js. The script installs `appdmg` through npm. |
 | Linux | Debian or Ubuntu. The script installs the build packages with apt and downloads `appimagetool`. |

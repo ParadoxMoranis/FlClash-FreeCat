@@ -11,6 +11,7 @@ import 'package:fl_clash/common/system_dns.dart';
 import 'package:fl_clash/core/core.dart';
 import 'package:fl_clash/database/database.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/freecat/client.dart';
 import 'package:fl_clash/features/freecat/errors.dart';
 import 'package:fl_clash/features/freecat/service.dart';
 import 'package:fl_clash/models/models.dart';

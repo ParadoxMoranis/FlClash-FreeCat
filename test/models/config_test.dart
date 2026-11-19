@@ -152,6 +152,28 @@ void main() {
       expect(restored.filters, defaultFilters);
     });
 
+    test(
+      'timeout defaults and explicit legacy settings survive round-trip',
+      () {
+        for (final entry in [
+          (json: <String, Object?>{}, explicit: false),
+          (json: <String, Object?>{'delayTestTimeout': 8000}, explicit: true),
+          (json: <String, Object?>{'delayTestTimeout': 2000}, explicit: true),
+          (
+            json:
+                jsonDecode(jsonEncode(const AppSettingProps().toJson()))
+                    as Map<String, Object?>,
+            explicit: false,
+          ),
+        ]) {
+          final props = AppSettingProps.fromJson(entry.json);
+          final restored = roundTrip(props.toJson, AppSettingProps.fromJson);
+          expect(restored.delayTestTimeoutExplicit, entry.explicit);
+          expect(restored.delayTestTimeout, props.delayTestTimeout);
+        }
+      },
+    );
+
     test('a saved outboundModeV2 card folds into outboundMode', () {
       final restored = AppSettingProps.fromJson({
         'dashboardWidgets': ['networkSpeed', 'outboundModeV2', 'outboundMode'],

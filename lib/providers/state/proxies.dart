@@ -197,6 +197,26 @@ String? manualTestUrlOverride(Ref ref) {
 }
 
 @riverpod
+int manualTestTimeout(Ref ref) {
+  final settings = ref.watch(
+    appSettingProvider.select(
+      (state) => (
+        timeout: state.delayTestTimeout,
+        explicit: state.delayTestTimeoutExplicit,
+      ),
+    ),
+  );
+  final type = ref.watch(
+    currentProfileProvider.select((profile) => profile?.type),
+  );
+  return type == ProfileType.freecat &&
+          !settings.explicit &&
+          settings.timeout == defaultDelayTestTimeout
+      ? freecatManualTestTimeout
+      : settings.timeout;
+}
+
+@riverpod
 String realTestUrl(Ref ref, [String? testUrl]) {
   final override = ref.watch(manualTestUrlOverrideProvider);
   if (override != null) return override;

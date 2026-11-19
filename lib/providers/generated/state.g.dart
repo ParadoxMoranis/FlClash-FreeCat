@@ -89,7 +89,7 @@ final class CoreOptionsProvider
   }
 }
 
-String _$coreOptionsHash() => r'ef6f8c53ef8a3e12f78c37c96eebbcf5ee25a5ae';
+String _$coreOptionsHash() => r'1dcc087b7315a0c63c14bfa644c76ea517f34e5d';
 
 @ProviderFor(setupPatch)
 final setupPatchProvider = SetupPatchProvider._();
@@ -2401,6 +2401,46 @@ final class ManualTestUrlOverrideProvider
 
 String _$manualTestUrlOverrideHash() =>
     r'2c112252b726c64a9dc9e7de475ba885a3e9516d';
+
+@ProviderFor(manualTestTimeout)
+final manualTestTimeoutProvider = ManualTestTimeoutProvider._();
+
+final class ManualTestTimeoutProvider extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
+  ManualTestTimeoutProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'manualTestTimeoutProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$manualTestTimeoutHash();
+
+  @$internal
+  @override
+  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  int create(Ref ref) {
+    return manualTestTimeout(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$manualTestTimeoutHash() => r'172ef2aeaa322913dc62166c57586fd94038b834';
 
 @ProviderFor(realTestUrl)
 final realTestUrlProvider = RealTestUrlFamily._();

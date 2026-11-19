@@ -42,10 +42,14 @@
 
 | 平台 | 安装包 | 说明 |
 | --- | --- | --- |
-| Android | `arm64-v8a`、`armeabi-v7a`、`x86_64` 三种 APK | 绝大多数手机选 `arm64-v8a`；后续更新需使用相同签名密钥。 |
-| Windows 10 及以上 | 安装版（`.exe`）或便携版（`.zip`），分 x64 与 ARM64 | 骁龙等 ARM 架构笔记本选 ARM64。 |
-| macOS 12 及以上 | Apple Silicon 与 Intel 两种 DMG | 未签名构建可能需在“隐私与安全性”中允许运行。 |
+| Android | `arm64-v8a`、`armeabi-v7a`、`x86_64` 三种 APK | 绝大多数手机选 `arm64-v8a`；没有正式密钥时，CI 使用临时 debug key 和 `com.follow.clash.dev`，后续更新可能需要卸载旧 APK。 |
+| Windows 10 及以上 | 安装版（`.exe`）或便携版（`.zip`），分 x64 与 ARM64 | 骁龙等 ARM 架构笔记本选 ARM64；安装包没有发布者代码签名。 |
+| macOS 12 及以上 | Apple Silicon 与 Intel 两种 DMG | 使用 ad-hoc 签名，没有 Apple 开发者证书和公证，可能需在“隐私与安全性”中允许运行。 |
 | Linux | `.deb`、`.rpm`、AppImage 与 `.tar.gz`，分 x64 与 ARM64 | 稳定版额外提供校验和锁定的 AUR 源码包。 |
+
+发布工作流无需签名 secrets 即可运行；只有标签与 `pubspec.yaml` 版本匹配、全部必要检查和各平台安装包构建成功，
+才会发布 Release。发行文件包含 `SHA256SUMS` 和 `ANDROID-SIGNING.txt`。Android 需要完整的四项正式签名 secrets
+才能保持签名身份；临时 debug key 可能随构建改变。配置方法见[发布指南](RELEASING.md)。CI 构建的客户端从本分支仓库检查更新。
 
 
 **Linux 托盘图标**
@@ -78,9 +82,12 @@ clash://install-config?url=<经过 URL 编码的订阅链接>
 更新同一份配置并保留节点选择。在其他设备恢复备份后需重新登录；导出的配置 YAML 仍含节点凭证。
 Linux 登录前需要解锁 GNOME Keyring、KWallet 等 Secret Service 密钥环。
 
-自由猫来源的手动测速默认使用官方的 `http://cp.cloudflare.com/generate_204`；用户自定义测速 URL 和超时设置优先。
-自动选择/故障转移的健康检查保留订阅地址和周期。HTTP 延迟通过不代表所有 HTTPS 访问都可用，取证依据见
-[测速差异说明](FREECAT_PROBE_FINDINGS.md)。
+自由猫来源的手动测速默认使用官方 3.2.0 实测的 `http://cp.cloudflare.com/generate_204`；未保存过超时时使用 5000 ms。
+用户自定义测速 URL 和超时优先；已保存的超时（包括 8000 ms）保持不变，严格对照时请手动选择 5000 ms。
+自动选择/故障转移的健康检查保留订阅地址和周期；DNS 与节点字段沿用订阅及用户覆写规则。
+自由猫默认 `global-ua` 对齐实测 3.2.0 订阅 User-Agent，显式 `global-ua` 保留。
+`chrome120` TLS 默认是本分支的兼容策略，现有证据未证明官方客户端使用的 TLS 指纹。
+HTTP 延迟通过不代表所有 HTTPS 访问都可用，取证依据见[测速差异说明](FREECAT_PROBE_FINDINGS.md)。
 
 **Android 自动化。** Tasker、MacroDroid 等应用可以用下面的 Action 启动 Activity，从而启动、停止或切换代理：
 
@@ -112,7 +119,7 @@ dart setup.dart android   # 或 windows、macos、linux
 
 | 平台 | 额外依赖 |
 | --- | --- |
-| Android | 带 NDK 的 Android SDK。加上 `--arch arm64` 可以只构建单个 ABI。 |
+| Android | 带 NDK 的 Android SDK 与 JDK 17。加上 `--arch arm64` 可以只构建单个 ABI。 |
 | Windows | 编译内核用的 GCC（MinGW-w64），以及打包安装程序用的 [Inno Setup](https://jrsoftware.org/isinfo.php) 6。 |
 | macOS | Xcode 与 Node.js。脚本会通过 npm 安装 `appdmg`。 |
 | Linux | Debian 或 Ubuntu。脚本会用 apt 安装构建所需的软件包，并下载 `appimagetool`。 |

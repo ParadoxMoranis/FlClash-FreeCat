@@ -23,19 +23,14 @@ CoreOptions coreOptions(Ref ref) {
       (state) => (testUrl: state.testUrl, mitmCapture: state.mitm.capture),
     ),
   );
-  final (:checkCertificate, :delayTestTimeout) = ref.watch(
-    appSettingProvider.select(
-      (state) => (
-        checkCertificate: state.checkCertificate,
-        delayTestTimeout: state.delayTestTimeout,
-      ),
-    ),
+  final checkCertificate = ref.watch(
+    appSettingProvider.select((state) => state.checkCertificate),
   );
   final override = ref.watch(manualTestUrlOverrideProvider);
   return CoreOptions(
     testUrl: override ?? testUrl,
     skipCertVerify: !checkCertificate,
-    delayTestTimeout: delayTestTimeout,
+    delayTestTimeout: ref.watch(manualTestTimeoutProvider),
     mitmCapture: mitmFeature && mitmCapture,
   );
 }

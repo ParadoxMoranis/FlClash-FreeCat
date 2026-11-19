@@ -1,11 +1,12 @@
-## Changes in v0.9.5
+## Changes in v0.9.6
 
-- FreeCat manual delay tests now default to the official HTTP Cloudflare endpoint. Group health checks keep their subscription URLs and intervals.
-- Requests, nested-group results, pending indicators, delay sorting and tray values use the same manual probe URL.
-- User-selected test URLs and timeouts take precedence; ordinary subscriptions retain their existing behavior.
-- Machine-local coding-tool settings and private capture artifacts are excluded from version control. Shared development rules remain versioned.
+- FreeCat subscription requests now use the observed official 3.2.0 subscription User-Agent. The same value supplies FreeCat's default `global-ua`, while an explicit `global-ua` is retained. The panel login/token flow and subscription decryption remain unchanged; the 3.2.0 findings do not establish a new panel User-Agent.
+- Manual FreeCat delay tests default to `http://cp.cloudflare.com/generate_204` with a 5000 ms timeout when no timeout has been saved, matching the observed 3.2.0 IPC request. Explicit URLs and timeouts take precedence. Previously saved timeouts, including 8000 ms, are retained; select 5000 ms manually for a strict comparison. Ordinary subscriptions retain their 8000 ms default.
+- Subscription group health-check URLs and intervals, DNS configuration, node addresses, ports, passwords, SNI and certificate-verification fields remain under the existing subscription and user override rules. Manual tests do not replace group health checks.
+- FreeCat Trojan nodes using the default TCP transport retain the `chrome120` compatibility default when the subscription supplies no `client-fingerprint`. Existing FreeCat profiles receive it when loaded, without signing in again or refreshing. Explicit fingerprints and other transports and protocols remain as configured; ordinary subscriptions retain their existing behavior.
 
-An HTTP delay result does not prove HTTPS connectivity. This release aligns the probe definition and does not claim to fix every unavailable server or TLS failure.
+The official 3.2.0 evidence does not establish which TLS ClientHello fingerprint the official client uses. `chrome120` is this fork's compatibility choice: controlled tests against four fixed node addresses returned successful HTTP probes for 11/12 `chrome120` attempts and 1/12 default attempts. Endpoint timeouts can still occur; an HTTP delay result does not prove HTTPS connectivity or full equivalence with the official client.
+
 
 ## Downloads
 
@@ -24,10 +25,10 @@ The Linux bundle archive extracts directly to `FlClash`, `FlClashCore`, `FlClash
 
 Stable releases include `flclash-freecat-bin-<version>.tar.gz`, containing the AUR source package and exact checksums for both Linux architectures. This artifact prepares an AUR submission; the workflow does not publish to AUR. Prereleases omit the AUR source package.
 
-Windows and macOS packages are not code-signed or notarized by this workflow. Android signing details for this run appear below and in `ANDROID-SIGNING.txt`; APKs built without the complete release-signing secrets use a temporary debug key and the separate `com.follow.clash.dev` application ID.
+Windows packages have no publisher code signature. macOS uses ad-hoc signing without an Apple Developer certificate or notarization; system security approval may be required. Android signing details for this run appear below and in `ANDROID-SIGNING.txt`; APKs built without the complete release-signing secrets use a temporary debug key and the separate `com.follow.clash.dev` application ID. The debug key may change between builds, so an update may require uninstalling the previous APK and losing its local app data.
 
 ## Release and site maintenance
 
-Branch pushes and manual runs build downloadable Actions artifacts without requiring a release tag or signing secrets. Publishing requires a `v<version>` tag that exactly matches the version in `pubspec.yaml`, excluding its `+build` suffix, and successful checks plus every platform package. A prerelease tag must have the same prerelease suffix in `pubspec.yaml`.
+Branch pushes and manual runs on branches build downloadable Actions artifacts without requiring a release tag or signing secrets. Publishing requires running on a `v<version>` tag that exactly matches the version in `pubspec.yaml`, excluding its `+build` suffix, and successful checks plus every platform package. Push the tag to start publication; a manual run selected on an existing matching tag also enters the release job. A prerelease tag must have the same prerelease suffix in `pubspec.yaml`. Release uploads, generated AUR download links and the packaged client's update URLs use the current repository.
 
 GitHub Pages is disabled unless the repository variable `ENABLE_PAGES` is exactly `true`. Before enabling it, audit `site/` for inherited upstream download URLs, branding and claims, and configure the repository's Pages source as GitHub Actions. The Pages workflow supplies this repository as `SITE_REPOSITORY` and its Pages address as `SITE_URL`; inherited hardcoded site content still needs review.

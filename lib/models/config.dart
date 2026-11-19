@@ -226,6 +226,10 @@ Object? _readUserAgents(Map<dynamic, dynamic> json, String key) {
   return [...defaultUserAgents, custom];
 }
 
+Object? _readDelayTestTimeoutExplicit(Map<dynamic, dynamic> json, String key) {
+  return json[key] ?? json.containsKey('delayTestTimeout');
+}
+
 @freezed
 abstract class Filter with _$Filter {
   const factory Filter({required String label, required String regex}) =
@@ -250,6 +254,9 @@ abstract class AppSettingProps with _$AppSettingProps {
     @Default(true) bool closeConnections,
     @Default(RequestFeed.live) RequestFeed requestFeed,
     @Default(defaultDelayTestTimeout) int delayTestTimeout,
+    @Default(false)
+    @JsonKey(readValue: _readDelayTestTimeoutExplicit)
+    bool delayTestTimeoutExplicit,
     @Default(TabAnimation.fade)
     @JsonKey(readValue: _readTabAnimation)
     TabAnimation tabAnimation,

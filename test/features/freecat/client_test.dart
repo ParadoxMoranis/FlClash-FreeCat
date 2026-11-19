@@ -444,7 +444,7 @@ void main() {
         expect(request.headers.value(HttpHeaders.acceptHeader), '*/*');
         expect(
           request.headers.value(HttpHeaders.userAgentHeader),
-          'freecatencua/v3.1.0 clash-verge Platform/windows',
+          'freecatencua/v3.2.0 clash-verge Platform/windows',
         );
       },
     );
@@ -478,7 +478,7 @@ void main() {
         );
         expect(
           requests.single.headers.value(HttpHeaders.userAgentHeader),
-          'freecatencua/v3.1.0 clash-verge Platform/windows',
+          'freecatencua/v3.2.0 clash-verge Platform/windows',
         );
       },
     );

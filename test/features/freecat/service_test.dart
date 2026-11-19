@@ -24,6 +24,18 @@ proxy-groups:
 rules: ['MATCH,Freecat']
 ''';
 
+class _FailingStore extends FreecatAccountStore {
+  bool failWrites = false;
+
+  @override
+  Future<void> write(int profileId, FreecatAccount account) {
+    if (failWrites) {
+      throw const FreecatException(FreecatFailure.storage);
+    }
+    return super.write(profileId, account);
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -37,6 +49,9 @@ void main() {
   var expired = false;
   var decoy = false;
   var token = 'account-one';
+  String? subscriptionUrl;
+  String? userinfo;
+  var updateInterval = '12';
 
   Future<String?> validate(String path, String key) async => null;
 
@@ -68,6 +83,9 @@ void main() {
     expired = false;
     decoy = false;
     token = 'account-one';
+    subscriptionUrl = null;
+    userinfo = null;
+    updateInterval = '12';
     requests.clear();
     server.listen((request) async {
       requests.add(request.uri.path);
@@ -86,7 +104,8 @@ void main() {
           request.response.write(
             jsonEncode({
               'data': {
-                'subscribe_url': '$host/subscription?token=$token',
+                'subscribe_url':
+                    subscriptionUrl ?? '$host/subscription?token=$token',
                 'u': 10,
                 'd': 20,
                 'transfer_enable': 100,
@@ -96,7 +115,10 @@ void main() {
           );
         }
       } else {
-        request.response.headers.set('profile-update-interval', '12');
+        request.response.headers.set('profile-update-interval', updateInterval);
+        if (userinfo != null) {
+          request.response.headers.set('subscription-userinfo', userinfo!);
+        }
         request.response.write(
           decoy
               ? _yaml.replaceAll('203.0.113.10', 'freevip.freecatnodles.com')
@@ -147,6 +169,127 @@ void main() {
         updated.toJson().toString(),
         isNot(contains('runtime-only-password')),
       );
+    },
+  );
+
+  test('follows refreshed subscription frontends safely', () async {
+    final imported = await signIn();
+    final frontend = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() => frontend.close(force: true));
+    final received = <Uri>[];
+    frontend.listen((request) async {
+      received.add(request.uri);
+      expect(request.headers.value(HttpHeaders.authorizationHeader), isNull);
+      expect(
+        request.headers.value(HttpHeaders.userAgentHeader),
+        FreecatClient.subscriptionUserAgent,
+      );
+      request.response.write(_yaml);
+      await request.response.close();
+    });
+    subscriptionUrl =
+        'http://127.0.0.1:${frontend.port}/rotated?token=synthetic%2Btoken';
+    requests.clear();
+    final updated = await service.update(imported, validate: validate);
+    expect(requests, ['/api/v1/user/getSubscribe']);
+    expect(received.single.path, '/rotated');
+    expect(received.single.query, 'token=synthetic%2Btoken');
+    final account = await store.read(profile.id);
+    expect(account?.host, host);
+    expect(account?.token, 'account-one');
+    expect(account?.subscribeUrl, subscriptionUrl);
+    expect(updated.url, isEmpty);
+    expect(updated.toJson().toString(), isNot(contains('synthetic')));
+  });
+
+  test('uses a daily interval when the server header is invalid', () async {
+    updateInterval = 'invalid';
+    final imported = await signIn();
+    expect(imported.autoUpdateDuration, const Duration(hours: 24));
+  });
+
+  test(
+    'refresh preserves user intervals and uses response accounting',
+    () async {
+      final imported = await signIn();
+      final customized = imported.copyWith(
+        autoUpdateDuration: const Duration(hours: 6),
+        autoUpdate: false,
+      );
+      updateInterval = '48';
+      userinfo = 'upload=30; download=40; total=200; expire=1234567890';
+      final updated = await service.update(customized, validate: validate);
+      expect(updated.autoUpdateDuration, const Duration(hours: 6));
+      expect(updated.autoUpdate, isFalse);
+      expect(
+        updated.subscriptionInfo,
+        const SubscriptionInfo(
+          upload: 30,
+          download: 40,
+          total: 200,
+          expire: 1234567890,
+        ),
+      );
+    },
+  );
+
+  test(
+    'failed secure writes preserve the last usable account and file',
+    () async {
+      final failingStore = _FailingStore();
+      service = FreecatService(store: failingStore);
+      final imported = await signIn();
+      final original = await (await imported.file).readAsBytes();
+      final saved = await store.snapshot(profile.id);
+      failingStore.failWrites = true;
+      token = 'account-two';
+      await expectLater(
+        signIn(input: imported),
+        throwsA(
+          isA<FreecatException>().having(
+            (error) => error.failure,
+            'failure',
+            FreecatFailure.storage,
+          ),
+        ),
+      );
+      expect(await store.snapshot(profile.id), saved);
+      expect(await (await imported.file).readAsBytes(), original);
+      failingStore.failWrites = false;
+      final recovered = await signIn(input: imported);
+      expect((await service.readAccount(recovered.id))?.token, 'account-two');
+    },
+  );
+
+  test(
+    'failed file replacement restores the previous account snapshot',
+    () async {
+      final imported = await signIn();
+      final target = await imported.file;
+      final original = await target.readAsBytes();
+      final saved = await store.snapshot(profile.id);
+      final backup = File('${target.path}.previous');
+      token = 'account-two';
+      await expectLater(
+        service.signIn(
+          imported,
+          host: host,
+          email: 'second@example.test',
+          password: 'synthetic-password',
+          validate: (_, _) async {
+            await target.rename(backup.path);
+            await Directory(target.path).create();
+            return null;
+          },
+        ),
+        throwsA(isA<FileSystemException>()),
+      );
+      expect(await store.snapshot(profile.id), saved);
+      await Directory(target.path).delete();
+      await backup.rename(target.path);
+      expect(await target.readAsBytes(), original);
+      final recovered = await service.update(imported, validate: validate);
+      expect(recovered.selectedMap, imported.selectedMap);
     },
   );
 
@@ -218,6 +361,9 @@ void main() {
       );
       expect(await (await imported.file).readAsBytes(), original);
       expect((await store.read(profile.id))?.token, 'account-one');
+      decoy = false;
+      final recovered = await service.update(imported, validate: validate);
+      expect(recovered.selectedMap, imported.selectedMap);
     },
   );
 

@@ -4,6 +4,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/database.dart';
+import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/config/general.dart';
 import 'package:flutter/widgets.dart';
@@ -45,6 +46,36 @@ void main() {
   }
 
   PatchClashConfig config() => container.read(patchClashConfigProvider);
+
+  testWidgets(
+    'FreeCat timeout shows its default and saves an explicit choice',
+    (tester) async {
+      container
+          .read(profilesProvider.notifier)
+          .put(
+            const Profile(
+              id: 1,
+              type: ProfileType.freecat,
+              autoUpdateDuration: Duration.zero,
+            ),
+          );
+      container.read(currentProfileIdProvider.notifier).value = 1;
+      await pumpGeneralView(tester);
+
+      expect(find.text('5000 ms'), findsOneWidget);
+      await tester.tap(find.text(currentAppLocalizations.delayTestTimeout));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('8000 ms'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('8000 ms'), findsOneWidget);
+      expect(
+        container.read(appSettingProvider).delayTestTimeoutExplicit,
+        isTrue,
+      );
+      expect(container.read(manualTestTimeoutProvider), 8000);
+    },
+  );
 
   testWidgets('lists no override until one is added', (tester) async {
     await pumpGeneralView(tester);

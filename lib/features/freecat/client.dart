@@ -44,8 +44,8 @@ class FreecatClient {
     'https://tuc.skyoutdoors.com.cn',
   ];
   static const _panelUserAgent = 'ziyoumao/v3.1.0 clash-verge Platform/windows';
-  static const _subscriptionUserAgent =
-      'freecatencua/v3.1.0 clash-verge Platform/windows';
+  static const subscriptionUserAgent =
+      'freecatencua/v3.2.0 clash-verge Platform/windows';
   static const _timeout = Duration(seconds: 20);
 
   final Dio _dio;
@@ -191,7 +191,7 @@ class FreecatClient {
           responseType: ResponseType.bytes,
           headers: {
             HttpHeaders.userAgentHeader: subscription
-                ? _subscriptionUserAgent
+                ? subscriptionUserAgent
                 : _panelUserAgent,
             HttpHeaders.acceptHeader: subscription ? '*/*' : 'application/json',
             HttpHeaders.authorizationHeader: ?token,

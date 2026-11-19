@@ -399,7 +399,7 @@ class ProxiesAction extends _$ProxiesAction {
     final pending = ref.read(pendingDelayTestsProvider.notifier);
     final job = _DelayTestJob(
       targets.map((target) => target.key),
-      Duration(milliseconds: ref.read(appSettingProvider).delayTestTimeout),
+      Duration(milliseconds: ref.read(manualTestTimeoutProvider)),
     );
     _delayTestJobs.add(job);
     // TaskPool.run starts a task synchronously while it has an idle slot.

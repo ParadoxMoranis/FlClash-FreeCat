@@ -487,7 +487,6 @@ class SetupAction extends _$SetupAction {
     if (profileId == null) {
       return (yaml: '', md5: '', counts: configCountsOf(const {}), base: null);
     }
-    final defaultUA = globalState.packageInfo.ua;
     final networkSetting = ref.read(
       networkSettingProvider.select(
         (state) => (
@@ -499,12 +498,16 @@ class SetupAction extends _$SetupAction {
     );
     final appendSystemDns = networkSetting.appendSystemDns;
     final isCustom = setupState.profileType == ProfileType.custom;
+    final isFreecat = setupState.profileType == ProfileType.freecat;
+    final defaultUA = isFreecat
+        ? FreecatClient.subscriptionUserAgent
+        : globalState.packageInfo.ua;
     final scriptContent =
         !isCustom && setupState.extendType == ExtendType.script
         ? await setupState.script?.content
         : null;
     final hasScript = scriptContent?.isNotEmpty == true;
-    final profileBase = !isCustom && !hasScript
+    final profileBase = !isCustom && !isFreecat && !hasScript
         ? await _core.getProfileBase(profileId)
         : null;
     Map<String, dynamic> rawConfig = isCustom
@@ -536,6 +539,7 @@ class SetupAction extends _$SetupAction {
         profilesPath: directory,
         profileId: profileId,
         rawConfig: rawConfig,
+        freecatTlsCompatibility: isFreecat,
         realPatchConfig: patchConfig,
         overrides: setupState.overrides,
         bypassPrivateRoute: networkSetting.bypassPrivateRoute,

@@ -168,11 +168,40 @@ rules:
           expect(groups[0]['proxies'], ['A', 'Auto']);
           expect(groups[1]['proxies'], ['A']);
           expect(groups[1]['url'], 'https://example.com/generate_204');
+          expect(groups[1]['interval'], 300);
           expect(result['dns'], original['dns']);
           expect(result['rules'], original['rules']);
         }
       },
     );
+
+    test('preserves node fields and official group health checks', () {
+      const text = '''
+proxies:
+  - {name: A, type: trojan, server: node.example.test, port: 443, password: 'synthetic-password', sni: tls.example.test, udp: true, skip-cert-verify: true}
+  - {name: B, type: trojan, server: 203.0.113.20, port: 8443, password: 'second-password', sni: other.example.test, udp: false, skip-cert-verify: false}
+  - {name: C, type: trojan, server: 203.0.113.30, port: 443, password: 'third-password'}
+proxy-groups:
+  - {name: Freecat, type: select, proxies: [Auto, Failover, A, B, C]}
+  - {name: Auto, type: url-test, proxies: [A, B, C], url: 'http://www.gstatic.com/generate_204', interval: 86400}
+  - {name: Failover, type: fallback, proxies: [A, B, C], url: 'http://www.gstatic.com/generate_204', interval: 7200}
+dns:
+  enable: true
+  respect-rules: true
+  listen: ''
+  nameserver: [https://dns.example.test/dns-query]
+  proxy-server-nameserver: [https://proxy-dns.example.test/dns-query]
+rules: ['MATCH,Freecat']
+''';
+      final original = loadYaml(text) as Map;
+      for (final input in [text, _encrypt(text)]) {
+        final result = _normalize(input);
+        expect(result['proxies'], original['proxies']);
+        expect(result['proxy-groups'], original['proxy-groups']);
+        expect(result['dns'], original['dns']);
+        expect(result['rules'], original['rules']);
+      }
+    });
 
     test('applies YAML merges before identifying marker names', () {
       final result = _normalize('''

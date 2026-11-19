@@ -98,7 +98,8 @@ void main() {
           verify(() => core.testDelay(captureAny())).captured.single
               as TestDelayParams;
       expect(request.testUrl, _officialUrl);
-      expect(request.timeout, defaultDelayTestTimeout);
+      expect(request.timeout, 5000);
+      expect(container.read(coreOptionsProvider).delayTestTimeout, 5000);
       expect(container.read(coreOptionsProvider).testUrl, _officialUrl);
       expect(
         container.read(
@@ -166,6 +167,39 @@ void main() {
       container.read(delayProvider(proxyName: 'Auto', testUrl: _healthUrl)),
       91,
     );
+  });
+
+  test('an explicitly selected 8000 ms timeout is preserved', () async {
+    container
+        .read(appSettingProvider.notifier)
+        .update(
+          (settings) => settings.copyWith(
+            delayTestTimeout: 8000,
+            delayTestTimeoutExplicit: true,
+          ),
+        );
+    when(() => core.testDelay(any())).thenAnswer(
+      (_) async => const Delay(name: 'test-node', url: _officialUrl, value: 91),
+    );
+
+    await runGroup();
+
+    final request =
+        verify(() => core.testDelay(captureAny())).captured.single
+            as TestDelayParams;
+    expect(request.timeout, 8000);
+    expect(container.read(coreOptionsProvider).delayTestTimeout, 8000);
+  });
+
+  test('legacy saved timeout survives source switching', () async {
+    container
+        .read(appSettingProvider.notifier)
+        .update((_) => AppSettingProps.fromJson({'delayTestTimeout': 8000}));
+    expect(container.read(manualTestTimeoutProvider), 8000);
+    container.read(currentProfileIdProvider.notifier).value = 2;
+    expect(container.read(manualTestTimeoutProvider), 8000);
+    container.read(currentProfileIdProvider.notifier).value = 1;
+    expect(container.read(manualTestTimeoutProvider), 8000);
   });
 
   test('an explicitly picked original URL is preserved for FreeCat', () {

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/mitm_module.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/freecat/tls.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -117,7 +118,9 @@ Future<RealProfile> makeRealProfileTask(MakeRealProfileState data) async {
 }
 
 Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
-  final rawConfig = Map.from(data.rawConfig);
+  final rawConfig = data.freecatTlsCompatibility
+      ? withFreecatTlsCompatibility(data.rawConfig)
+      : Map<String, dynamic>.from(data.rawConfig);
   final realPatchConfig = data.realPatchConfig;
   final profilesPath = data.profilesPath;
   final profileId = data.profileId;

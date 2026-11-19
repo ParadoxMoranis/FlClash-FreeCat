@@ -200,6 +200,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     required int profileId,
     required Map<String, dynamic> rawConfig,
     required PatchClashConfig realPatchConfig,
+    @Default(false) bool freecatTlsCompatibility,
     @Default(ProfileOverrides()) ProfileOverrides overrides,
     @Default(false) bool bypassPrivateRoute,
 
