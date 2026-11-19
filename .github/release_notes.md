@@ -1,8 +1,9 @@
-## Unreleased
+## Changes in v0.9.8
 
 - Correct the first FreeCat panel hostname to `tccdnclient.miaowuppaa.com`, retaining the existing fallback order.
 - FreeCat profiles now use `find-process-mode: always` in both generated configuration and live updates so subscription process rules can match. This source-specific behavior also takes precedence over a saved `off`; ordinary profiles retain their selected mode.
 - Match only known placeholder prefixes at the start of node names, preserving real nodes whose names contain notice or website text.
+- Keep the existing FreeCat HTTP manual probe defaults and saved user choices. A failed test of one endpoint does not by itself establish node failure or general HTTPS reachability; see `FREECAT_PROBE_FINDINGS.md` for the reviewed Windows 0.9.4 investigation and its measurement limitations.
 
 ## Changes in v0.9.7
 

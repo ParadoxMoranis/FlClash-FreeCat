@@ -127,3 +127,25 @@ Windows 安装器支持/更新链接已指向本 fork，版本与标签必须一
 下次最小证据：故障时间、平台/版本、是卡片红还是实际请求失败、匿名节点号、解析 IP 的一致哈希与地址族/TTL、
 当前 URL/timeout/指纹和 ipv6/unified-delay/tcp-concurrent 值、DNS/TCP/TLS/代理后 HTTP 阶段错误及耗时、刷新/apply 时间，
 加官方同分钟对照即可。无需密码、token、完整订阅 URL、真实节点地址或完整 YAML。
+
+## Windows 0.9.4 跨机器交接复核
+
+`ARCH-AGENT-freecat-delay-timeout.md` 中，旧版使用 HTTPS gstatic、官方使用 HTTP 探测的版本差异成立，现有
+FreeCat URL 派生已覆盖默认地址，不再重复修改。读取 prefs 的 test-url 不是新版本的实际请求判据：未 picked 的
+旧 HTTPS 默认值会被 FreeCat provider 覆盖；用户明确 picked 或自定义值仍保留。
+
+报告的 443 脚本只发送 Trojan 连接头后 recv，没有给目标发送 TLS ClientHello。Trojan CONNECT 没有 SOCKS 式成功回复，
+正常 TLS 服务也可能等待客户端发起握手，因此“无返回=443 TCP 超时”及“根因已锁定”均不能由该脚本证明。
+应通过代理真正发起 HTTPS 请求并区分节点外层 TLS 与目标内层 TLS。报告文字称 Cloudflare 5/6 为 204，而原始表为
+3 个 403、3 个 204；HTTPS 列实际只列出 5 个超时，也不足以支撑 6/6 的汇总。
+
+当前手动 URLTest 使用 HEAD，expectedStatus 为空时接受任意 HTTP 状态；HTTP 403 本身不会自动变成 -2。
+-1 表示探测 context 到期，-2 表示其它错误或节点不存在，不能从红字直接定位到 443 或 Cloudflare 拒绝。
+
+Arch 本机安装版本为 0.9.5，FreeCat 类型、保存的默认 HTTPS URL 未 picked，超时 8000 且无新标记；该版本已具备
+HTTP URL 覆盖，不可仅据 prefs 判定仍在测 443。只读观察 Core FD 约 47、软限制 524287，没有本次 fd 耗尽证据。
+经当前本机代理执行真实 HEAD：Cloudflare HTTP 204/0.63s、gstatic HTTP 204/0.65s、gstatic HTTPS 204/0.40s。
+这是当前选路的三次观察，非全节点或历史同因复现；未修改系统代理、选中节点或用户设置。
+
+因此发布 v0.9.8 包含已验证的 host、进程匹配和占位识别修复，保留现有测速策略与 TLS 兼容；不加入未经证实的
+重试、端口降级、HTTP 状态过滤、强制超时迁移或 fd 设置。旧配置严格官方对照仍可手选 5000 ms。
