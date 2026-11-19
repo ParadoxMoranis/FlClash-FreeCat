@@ -1,4 +1,4 @@
-const freecatClientFingerprint = 'chrome120';
+const _freecatClientFingerprint = 'chrome120';
 
 Map<String, dynamic> withFreecatTlsCompatibility(Map<String, dynamic> config) {
   final proxies = config['proxies'];
@@ -11,7 +11,7 @@ Map<String, dynamic> withFreecatTlsCompatibility(Map<String, dynamic> config) {
             proxy['type'] == 'trojan' &&
             !proxy.containsKey('client-fingerprint') &&
             (proxy['network'] == null || proxy['network'] == 'tcp'))
-          {...proxy, 'client-fingerprint': freecatClientFingerprint}
+          {...proxy, 'client-fingerprint': _freecatClientFingerprint}
         else
           proxy,
     ],

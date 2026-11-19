@@ -1,9 +1,10 @@
-## Changes in v0.9.6
+## Changes in v0.9.7
 
 - FreeCat subscription requests now use the observed official 3.2.0 subscription User-Agent. The same value supplies FreeCat's default `global-ua`, while an explicit `global-ua` is retained. The panel login/token flow and subscription decryption remain unchanged; the 3.2.0 findings do not establish a new panel User-Agent.
 - Manual FreeCat delay tests default to `http://cp.cloudflare.com/generate_204` with a 5000 ms timeout when no timeout has been saved, matching the observed 3.2.0 IPC request. Explicit URLs and timeouts take precedence. Previously saved timeouts, including 8000 ms, are retained; select 5000 ms manually for a strict comparison. Ordinary subscriptions retain their 8000 ms default.
 - Subscription group health-check URLs and intervals, DNS configuration, node addresses, ports, passwords, SNI and certificate-verification fields remain under the existing subscription and user override rules. Manual tests do not replace group health checks.
 - FreeCat Trojan nodes using the default TCP transport retain the `chrome120` compatibility default when the subscription supplies no `client-fingerprint`. Existing FreeCat profiles receive it when loaded, without signing in again or refreshing. Explicit fingerprints and other transports and protocols remain as configured; ordinary subscriptions retain their existing behavior.
+- This release includes the complete 3.2.0 adaptation prepared for v0.9.6. That tag produced platform artifacts but was not published because the full test gate identified an internal constant exposed as public; its visibility is now corrected.
 
 The official 3.2.0 evidence does not establish which TLS ClientHello fingerprint the official client uses. `chrome120` is this fork's compatibility choice: controlled tests against four fixed node addresses returned successful HTTP probes for 11/12 `chrome120` attempts and 1/12 default attempts. Endpoint timeouts can still occur; an HTTP delay result does not prove HTTPS connectivity or full equivalence with the official client.
 
