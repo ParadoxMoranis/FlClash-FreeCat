@@ -175,6 +175,65 @@ rules:
       },
     );
 
+    test('only removes documented marker prefixes from nodes and groups', () {
+      const markerNames = [
+        '剩余流量：20 GB',
+        '剩余流量 : 20 GB',
+        '📊 剩余流量：20 GB',
+        '套餐到期: 长期有效',
+        '🏠网址 : https://example.test',
+        '🪧 提示：AI请使用AI名称节点',
+      ];
+      const nodeNames = [
+        '香港 提示：限速节点',
+        '香港 网址：https://node.example.test',
+        '🇭🇰 提示：限速节点',
+        '🇭🇰 网址：https://node.example.test',
+        '🐾 提示：限速节点',
+        '🐾 网址：https://node.example.test',
+        '📊 提示：限速节点',
+        '🏠 提示：限速节点',
+        '🪧 网址：https://node.example.test',
+        '🏠 香港 网址：https://node.example.test',
+        '🪧 香港 提示：限速节点',
+        '🇭🇰 剩余流量：限速节点',
+        '🐾 套餐到期：限速节点',
+        '提示：限速节点',
+        '网址：https://node.example.test',
+        '🪧 提示节点',
+        '🏠 网址节点',
+      ];
+      final nodes = [
+        for (final name in nodeNames)
+          {
+            'name': name,
+            'type': 'trojan',
+            'server': '203.0.113.10',
+            'port': 443,
+            'password': 'synthetic-password',
+          },
+      ];
+      final text = jsonEncode({
+        'proxies': [
+          ...nodes,
+          for (final name in markerNames) {'name': name, 'type': 'trojan'},
+        ],
+        'proxy-groups': [
+          {
+            'name': 'Freecat',
+            'type': 'select',
+            'proxies': [...markerNames, ...nodeNames],
+          },
+        ],
+        'rules': ['MATCH,Freecat'],
+      });
+      for (final input in [text, _encrypt(text)]) {
+        final result = _normalize(input);
+        expect(result['proxies'], nodes);
+        expect((result['proxy-groups'] as List).single['proxies'], nodeNames);
+      }
+    });
+
     test('preserves node fields and official group health checks', () {
       const text = '''
 proxies:
@@ -323,9 +382,9 @@ rules:
         final text = _fixture
             .replaceFirst(
               'proxy-groups:',
-              "  - {name: '提示：test', type: trojan}\nproxy-groups:",
+              "  - {name: '🪧 提示：test', type: trojan}\nproxy-groups:",
             )
-            .replaceFirst("proxies: ['A']", "proxies: ['提示：test']");
+            .replaceFirst("proxies: ['A']", "proxies: ['🪧 提示：test']");
         expect(
           () => _normalize(text),
           throwsA(_failure(FreecatFailure.invalidProfile)),

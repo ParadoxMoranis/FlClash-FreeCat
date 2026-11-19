@@ -11,7 +11,7 @@ final _whitespace = RegExp(r'\s');
 final _base64 = RegExp(
   r'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$',
 );
-final _marker = RegExp(r'(?:剩余流量|套餐到期|网址|提示)\s*[:：]');
+final _marker = RegExp(r'^(?:(?:📊\s*)?剩余流量|套餐到期|🏠\s*网址|🪧\s*提示)\s*[:：]');
 const _builtins = {
   'DIRECT',
   'REJECT',
