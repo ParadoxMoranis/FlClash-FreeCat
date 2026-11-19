@@ -43,6 +43,7 @@ class _RecordingCoreHandler extends CoreHandlerInterface {
         'name': 'DIRECT',
         'url': 'https://example.com',
         'value': 42,
+        'generation': 'apply-2',
       },
       CoreMethod.connectionList => {
         'connections': [
@@ -235,6 +236,7 @@ void main() {
     await handler.setupConfig(
       const SetupParams(
         selectedMap: {'GLOBAL': 'DIRECT'},
+        delayGeneration: 'apply-2',
         options: CoreOptions(testUrl: 'test'),
       ),
     );
@@ -280,6 +282,7 @@ void main() {
     });
     expect(json.decode(json.encode(handler.calls[CoreMethod.configSetup])), {
       'selected-map': {'GLOBAL': 'DIRECT'},
+      'delay-generation': 'apply-2',
       'options': {
         'test-url': 'test',
         'skip-cert-verify': false,
@@ -453,6 +456,23 @@ void main() {
     expect(legacy.single.data, 'provider-b');
   });
 
+  test('delay events retain the config generation', () {
+    final events = coreEventsFromData([
+      {
+        'type': 'delay',
+        'data': {
+          'name': 'DIRECT',
+          'url': 'https://example.com',
+          'value': 42,
+          'generation': 'apply-2',
+        },
+      },
+    ]);
+
+    final delay = Delay.fromJson(events.single.data as Map<String, Object?>);
+    expect(delay.generation, 'apply-2');
+  });
+
   test('event contract decodes the dns query the Core sends', () {
     final events = coreEventsFromData([
       {
@@ -533,7 +553,12 @@ void main() {
           timeout: 8000,
         ),
       ),
-      const Delay(name: 'DIRECT', url: 'https://example.com', value: 42),
+      const Delay(
+        name: 'DIRECT',
+        url: 'https://example.com',
+        value: 42,
+        generation: 'apply-2',
+      ),
     );
     expect((await handler.getConnections()).single.id, 'connection-1');
     expect(await handler.getConnectionCount(), 3);

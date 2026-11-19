@@ -142,6 +142,9 @@ void main() {
     );
     registerFallbackValue(const SetupBase(path: '', overlay: ''));
     registerFallbackValue(
+      const TestDelayParams(proxyName: 'P', testUrl: 'U', timeout: 0),
+    );
+    registerFallbackValue(
       const UpdateParams(
         tun: Tun(),
         mixedPort: 7890,
@@ -657,6 +660,32 @@ void main() {
     });
   });
 
+  group('restoreDelayGeneration', () {
+    test(
+      'restores the service token once without clearing cached delays',
+      () async {
+        await mockPreferences({
+          'sharedState': '{"setupParams":{"delay-generation":"service-1"}}',
+        });
+        container
+            .read(delayDataSourceProvider.notifier)
+            .setDelay(const Delay(name: 'P', url: 'test', value: 42));
+
+        await action.restoreDelayGeneration();
+        expect(container.read(setupActionProvider), 'service-1');
+
+        await mockPreferences({
+          'sharedState': '{"setupParams":{"delay-generation":"older-service"}}',
+        });
+        await action.restoreDelayGeneration();
+        expect(container.read(setupActionProvider), 'service-1');
+        expect(container.read(delayDataSourceProvider)['test']?['P'], 42);
+        expect(action.applyProfileCalls, 0);
+        expect(action.coreRunningCalls, isEmpty);
+      },
+    );
+  });
+
   group('initStatus', () {
     test('is a no-op once the status has already been initialized', () async {
       globalState.needInitStatus = false;
@@ -1146,6 +1175,116 @@ void main() {
       script: null,
       overrides: ProfileOverrides(),
     );
+
+    test('actual applies cancel old probes and rotate their generation, while '
+        'an unchanged apply preserves the current cache', () async {
+      final profile = Profile.normal(label: 'p');
+      final core = _MockCoreHandlerInterface();
+      when(
+        () => core.getProfileBase(any()),
+      ).thenAnswer((_) async => const ProfileBase(config: {}, digest: 'd'));
+      when(() => core.getExternalProviders()).thenAnswer((_) async => []);
+      when(() => core.getProxies()).thenAnswer(
+        (_) async => const ProxiesData(
+          all: ['GLOBAL'],
+          proxies: {
+            'GLOBAL': {
+              'name': 'GLOBAL',
+              'type': 'Selector',
+              'all': ['DIRECT'],
+            },
+            'DIRECT': {'name': 'DIRECT', 'type': 'Direct'},
+          },
+        ),
+      );
+      final scoped = ProviderContainer(
+        overrides: [
+          profilesProvider.overrideWith(() => TestProfiles([profile])),
+          currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+          setupStateProvider.overrideWith(
+            (_, _) => nullProfileSetupState.copyWith(profileId: profile.id),
+          ),
+          coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+          setupActionProvider.overrideWith(SetupAction.new),
+        ],
+      );
+      addTearDown(scoped.dispose);
+      final generations = <String>[];
+      scoped.listen(setupActionProvider, (_, next) => generations.add(next));
+      final pushed = <SetupParams>[];
+      when(() => core.setupConfig(any())).thenAnswer((invocation) async {
+        final params = invocation.positionalArguments.single as SetupParams;
+        pushed.add(params);
+        expect(params.delayGeneration, isNotEmpty);
+        expect(scoped.read(setupActionProvider), params.delayGeneration);
+        expect(scoped.read(delayDataSourceProvider), isEmpty);
+        expect(scoped.read(pendingDelayTestsProvider), isEmpty);
+      });
+      final setup = scoped.read(setupActionProvider.notifier);
+      final proxies = scoped.read(proxiesActionProvider.notifier);
+      const proxy = Proxy(name: 'DIRECT', type: 'Direct');
+      final testUrl = scoped.read(realTestUrlProvider());
+
+      expect(await setup.applyProfile(force: true), isTrue);
+      final firstGeneration = pushed.single.delayGeneration;
+      scoped
+          .read(delayDataSourceProvider.notifier)
+          .setDelay(
+            Delay(
+              name: 'DIRECT',
+              url: testUrl,
+              value: 100,
+              generation: firstGeneration,
+            ),
+          );
+      proxies.setDelay(
+        Delay(
+          name: 'DIRECT',
+          url: testUrl,
+          value: 101,
+          generation: firstGeneration,
+        ),
+      );
+      final oldAnswer = Completer<Delay>();
+      when(() => core.testDelay(any())).thenAnswer((_) => oldAnswer.future);
+      final oldRun = proxies.proxyDelayTest(proxy);
+      expect(scoped.read(pendingDelayTestsProvider), isNotEmpty);
+
+      expect(await setup.applyProfile(force: true), isTrue);
+      final currentGeneration = pushed.last.delayGeneration;
+      expect(currentGeneration, isNot(firstGeneration));
+      expect(scoped.read(delayDataSourceProvider), isEmpty);
+      expect(scoped.read(pendingDelayTestsProvider), isEmpty);
+      expect(
+        scoped.read(sharedStateProvider).setupParams?.delayGeneration,
+        currentGeneration,
+      );
+      when(() => core.testDelay(any())).thenAnswer(
+        (_) async => Delay(
+          name: 'DIRECT',
+          url: testUrl,
+          value: 42,
+          generation: currentGeneration,
+        ),
+      );
+      await proxies.proxyDelayTest(proxy);
+      oldAnswer.complete(
+        Delay(
+          name: 'DIRECT',
+          url: testUrl,
+          value: -1,
+          generation: firstGeneration,
+        ),
+      );
+      await oldRun;
+
+      expect(await setup.applyProfile(), isTrue);
+      expect(pushed, hasLength(2));
+      expect(generations, [firstGeneration, currentGeneration]);
+      expect(scoped.read(setupActionProvider), currentGeneration);
+      expect(scoped.read(delayDataSourceProvider)[testUrl]?['DIRECT'], 42);
+      expect(await setup.inputsApplied(), isTrue);
+    });
 
     test(
       'a refresh failure still runs core.setupConfig and preloadInvoke',

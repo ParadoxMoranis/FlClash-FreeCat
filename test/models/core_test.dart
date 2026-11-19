@@ -16,6 +16,7 @@ void main() {
       expect(params.selectedMap, {'G1': 'P1'});
       expect(params.options.testUrl, 'http://test.com');
       expect(params.options.skipCertVerify, isTrue);
+      expect(params.delayGeneration, isEmpty);
     });
 
     test('toJson uses snake-case keys', () {
@@ -25,12 +26,25 @@ void main() {
       );
       final json = jsonDecode(jsonEncode(params)) as Map<String, Object?>;
       expect(json['selected-map'], {'G1': 'P1'});
+      expect(json['delay-generation'], isEmpty);
       expect(json['options'], {
         'test-url': 'http://t.com',
         'skip-cert-verify': false,
         'delay-test-timeout': defaultDelayTestTimeout,
         'mitm-capture': false,
       });
+    });
+
+    test('round-trips the delay generation', () {
+      const params = SetupParams(
+        selectedMap: {},
+        options: CoreOptions(testUrl: 'test'),
+        delayGeneration: 'apply-2',
+      );
+
+      final json = jsonDecode(jsonEncode(params)) as Map<String, Object?>;
+      expect(json['delay-generation'], 'apply-2');
+      expect(SetupParams.fromJson(json), params);
     });
   });
 
@@ -182,6 +196,7 @@ void main() {
       expect(delay.name, 'P1');
       expect(delay.url, 'test.com');
       expect(delay.value, 42);
+      expect(delay.generation, isEmpty);
       final out = delay.toJson();
       expect(out['value'], 42);
     });
@@ -189,6 +204,19 @@ void main() {
     test('null value', () {
       final delay = Delay.fromJson({'name': 'P1', 'url': 'test.com'});
       expect(delay.value, null);
+    });
+
+    test('round-trips the generation shared by events and direct answers', () {
+      final delay = Delay.fromJson({
+        'name': 'P1',
+        'url': 'test.com',
+        'value': -1,
+        'generation': 'apply-2',
+      });
+
+      expect(delay.generation, 'apply-2');
+      expect(Delay.fromJson(delay.toJson()), delay);
+      expect(delay.toJson()['generation'], 'apply-2');
     });
   });
 

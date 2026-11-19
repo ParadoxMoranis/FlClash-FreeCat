@@ -116,9 +116,10 @@ type DecryptConfigParams struct {
 }
 
 type SetupParams struct {
-	Base        *SetupBase        `json:"base,omitempty"`
-	SelectedMap map[string]string `json:"selected-map"`
-	Options     CoreOptions       `json:"options"`
+	Base            *SetupBase        `json:"base,omitempty"`
+	SelectedMap     map[string]string `json:"selected-map"`
+	Options         CoreOptions       `json:"options"`
+	DelayGeneration string            `json:"delay-generation,omitempty"`
 }
 
 type CoreOptions struct {
@@ -263,9 +264,10 @@ type TestDelayParams struct {
 }
 
 type Delay struct {
-	Url   string `json:"url"`
-	Name  string `json:"name"`
-	Value int32  `json:"value"`
+	Url        string `json:"url"`
+	Name       string `json:"name"`
+	Value      int32  `json:"value"`
+	Generation string `json:"generation,omitempty"`
 }
 
 type Traffic struct {

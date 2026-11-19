@@ -12,10 +12,14 @@ Pinned public submodules:
 
 | Component | Repository | Commit |
 | --- | --- | --- |
-| mihomo Core | `chen08209/Clash.Meta` | `024245dc72bc92f48237f865119afe0cd53ac9e6` |
+| mihomo Core | `ParadoxMoranis/Clash.Meta` | `bab18a99e8c8529b76460c81e9f8beffff9313e3` |
 | prism_ui | `chen08209/prism_ui` | `63450c0ac0e8e1b2c0f3ed4ad7926dc94e083185` |
 
 Clone with `--recurse-submodules`. Their own license notices and source histories remain available in those repositories.
+
+The Core fork retains `chen08209/Clash.Meta` commit `024245dc72bc92f48237f865119afe0cd53ac9e6` as its base.
+Its additional patch binds the existing FlClash delay hook to the tested proxy at probe start, allowing obsolete
+configuration results to be discarded without changing mihomo's probe URL, timeout or health-check policy.
 
 FreeCat protocol information comes from `FREECAT_REVERSE_ENGINEERING.md`. The integration contains no user credentials
 or real subscription responses. Neither FreeCat nor the upstream FlClash maintainers endorse this fork.

@@ -24,6 +24,10 @@ import '../helpers/test_profiles.dart';
 
 class MockCoreHandlerInterface extends Mock implements CoreHandlerInterface {}
 
+class _GenerationSetupAction extends SetupAction {
+  void selectGeneration(String generation) => state = generation;
+}
+
 const _testUrl = 'http://delay.test';
 
 Group _group(String name, List<Proxy> all) =>
@@ -88,10 +92,15 @@ void main() {
 
   setUp(() => reset(core));
 
-  ProviderContainer buildContainer({Profile? profile}) {
+  ProviderContainer buildContainer({
+    Profile? profile,
+    SetupAction? setupAction,
+  }) {
     final container = ProviderContainer(
       overrides: [
         coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+        if (setupAction != null)
+          setupActionProvider.overrideWith(() => setupAction),
         profilesProvider.overrideWith(() => TestProfiles([?profile])),
         currentProfileIdProvider.overrideWithBuild((_, _) => profile?.id),
       ],
@@ -425,6 +434,140 @@ void main() {
       expect(container.read(pendingDelayTestsProvider), isEmpty);
       verifyNever(() => core.testDelay(any()));
     });
+  });
+
+  group('delay generation', () {
+    testWidgets('a cleared cache rejects buffered and late old events', (
+      tester,
+    ) async {
+      final setup = _GenerationSetupAction();
+      final container = _delayContainer(
+        () => buildContainer(setupAction: setup),
+      );
+      container.read(setupActionProvider);
+      setup.selectGeneration('apply-1');
+      final action = actionOf(container);
+      action.setDelay(
+        const Delay(
+          name: 'HK-01',
+          url: _testUrl,
+          value: 100,
+          generation: 'apply-1',
+        ),
+      );
+
+      action.resetDelayTests();
+      setup.selectGeneration('apply-2');
+      action.setDelay(
+        const Delay(
+          name: 'HK-01',
+          url: _testUrl,
+          value: -1,
+          generation: 'apply-1',
+        ),
+      );
+      action.setDelay(const Delay(name: 'HK-01', url: _testUrl, value: -1));
+      await tester.pump(renderThrottleDuration);
+      expect(container.read(delayDataSourceProvider), isEmpty);
+
+      action.setDelay(
+        const Delay(
+          name: 'HK-01',
+          url: _testUrl,
+          value: 42,
+          generation: 'apply-2',
+        ),
+      );
+      await tester.pump(renderThrottleDuration);
+      expect(container.read(delayDataSourceProvider)[_testUrl]?['HK-01'], 42);
+    });
+
+    test('an old manual timeout cannot overwrite the newer success', () async {
+      final setup = _GenerationSetupAction();
+      final container = _delayContainer(
+        () => buildContainer(setupAction: setup),
+      );
+      container.read(setupActionProvider);
+      setup.selectGeneration('apply-1');
+      final oldAnswer = Completer<Delay>();
+      when(
+        () => core.testDelay(_delayTest(_testUrl)),
+      ).thenAnswer((_) => oldAnswer.future);
+      final action = actionOf(container);
+      final oldRun = action.proxyDelayTest(_proxy);
+
+      action.resetDelayTests();
+      setup.selectGeneration('apply-2');
+      when(() => core.testDelay(_delayTest(_testUrl))).thenAnswer(
+        (_) async => const Delay(
+          name: 'HK-01',
+          url: _testUrl,
+          value: 42,
+          generation: 'apply-2',
+        ),
+      );
+      await action.proxyDelayTest(_proxy);
+      oldAnswer.complete(
+        const Delay(
+          name: 'HK-01',
+          url: _testUrl,
+          value: -1,
+          generation: 'apply-1',
+        ),
+      );
+      await oldRun;
+
+      expect(container.read(delayDataSourceProvider)[_testUrl]?['HK-01'], 42);
+      expect(container.read(pendingDelayTestsProvider), isEmpty);
+    });
+
+    test('cancelled jobs cannot publish even a matching generation', () async {
+      final oldAnswer = Completer<Delay>();
+      when(
+        () => core.testDelay(_delayTest(_testUrl)),
+      ).thenAnswer((_) => oldAnswer.future);
+      final container = _delayContainer(buildContainer);
+      final action = actionOf(container);
+      final oldRun = action.proxyDelayTest(_proxy);
+
+      action.cancelDelayTests();
+      when(() => core.testDelay(_delayTest(_testUrl))).thenAnswer(
+        (_) async => const Delay(name: 'HK-01', url: _testUrl, value: 42),
+      );
+      await action.proxyDelayTest(_proxy);
+      oldAnswer.complete(const Delay(name: 'HK-01', url: _testUrl, value: -1));
+      await oldRun;
+
+      expect(container.read(delayDataSourceProvider)[_testUrl]?['HK-01'], 42);
+    });
+
+    test(
+      'resetting an apply cancels manual probes still in the queue',
+      () async {
+        final answer = Completer<Delay>();
+        when(
+          () => core.testDelay(_delayTest(_testUrl)),
+        ).thenAnswer((_) => answer.future);
+        final container = _delayContainer(buildContainer);
+        final action = actionOf(container);
+        final proxies = List.generate(
+          maxConcurrentDelayTests + 1,
+          (index) => Proxy(name: 'HK-$index', type: 'ss'),
+        );
+        final run = action.delayTest(proxies);
+        verify(
+          () => core.testDelay(_delayTest(_testUrl)),
+        ).called(maxConcurrentDelayTests);
+
+        action.resetDelayTests();
+        answer.complete(const Delay(name: 'HK-0', url: _testUrl, value: -1));
+        await run;
+
+        verifyNever(() => core.testDelay(any()));
+        expect(container.read(delayDataSourceProvider), isEmpty);
+        expect(container.read(pendingDelayTestsProvider), isEmpty);
+      },
+    );
   });
 
   group('delayTest', () {

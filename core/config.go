@@ -161,12 +161,15 @@ func applyConfig(params *SetupParams) error {
 	}
 
 	currentConfig = cfg
+	// Provider checks can start before ApplyConfig has replaced the proxy table.
+	activeDelayConfig.Store(&delayConfigState{generation: params.DelayGeneration})
 	hub.ApplyConfig(cfg)
 	patchSelectGroup(params.SelectedMap)
 	bumpRouteEpoch()
 	updateListeners(cfg)
 	reconcileGeoUpdater()
 	scheduleLoadMemoryRelease()
+	activeDelayConfig.Store(&delayConfigState{generation: params.DelayGeneration, ready: true})
 	if err != nil {
 		// The host tells this apart from a call that failed: the default config runs.
 		return &MethodError{Code: "config_rejected", Message: err.Error()}

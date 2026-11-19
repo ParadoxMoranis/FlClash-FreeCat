@@ -26,6 +26,12 @@ import (
 	"github.com/metacubex/mihomo/tunnel"
 )
 
+func keepDelayGeneration(t *testing.T) {
+	t.Helper()
+	previous := activeDelayConfig.Load()
+	t.Cleanup(func() { activeDelayConfig.Store(previous) })
+}
+
 func withCurrentConfig(t *testing.T, cfg *config.Config) {
 	t.Helper()
 	previous := currentConfig
@@ -805,11 +811,14 @@ func TestApplyConfigTellsARejectedProfileFromAFailedCall(t *testing.T) {
 	t.Cleanup(func() { constant.SetHomeDir(previous) })
 	withCurrentConfig(t, nil)
 	keepTunnel(t)
+	keepDelayGeneration(t)
+	oldGeneration := &delayConfigState{generation: "old-generation", ready: true}
+	activeDelayConfig.Store(oldGeneration)
 	if err := os.WriteFile(filepath.Join(home, "config.yaml"), []byte("proxies: [unterminated\n"), 0o600); err != nil {
 		t.Fatal(err)
 	}
 
-	err := applyConfig(&SetupParams{})
+	err := applyConfig(&SetupParams{DelayGeneration: "fallback-generation"})
 
 	var methodErr *MethodError
 	if !errors.As(err, &methodErr) || methodErr.Code != "config_rejected" {
@@ -817,6 +826,9 @@ func TestApplyConfigTellsARejectedProfileFromAFailedCall(t *testing.T) {
 	}
 	if currentConfig == nil {
 		t.Error("the default config did not take the rejected one's place")
+	}
+	if generation := activeDelayConfig.Load(); generation == oldGeneration || generation == nil || !generation.ready || delayGenerationValue(generation) != "fallback-generation" {
+		t.Errorf("fallback generation = %q, want the rejected apply to invalidate old probes", delayGenerationValue(generation))
 	}
 }
 

@@ -49,6 +49,9 @@ class CoreLib extends CoreHandlerInterface {
         outcome: CoreLifecycleOutcome.coalesced,
       );
     }
+    await globalState.container
+        .read(setupActionProvider.notifier)
+        .restoreDelayGeneration();
     final initializationError = await _service?.init() ?? '';
     if (initializationError.isNotEmpty) {
       throw StateError(initializationError);

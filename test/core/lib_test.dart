@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/preferences.dart';
 import '../helpers/test_profiles.dart';
 
 class _FakeService implements Service {
@@ -25,6 +26,7 @@ class _FakeService implements Service {
   CoreMethodResponse? Function(CoreMethodCall call)? onInvokeMethod;
 
   final invokedCalls = <CoreMethodCall>[];
+  SharedState? syncedState;
 
   @override
   Future<String> init() async {
@@ -35,6 +37,7 @@ class _FakeService implements Service {
   @override
   Future<String> syncState(SharedState state) async {
     calls.add('syncState');
+    syncedState = state;
     return syncError;
   }
 
@@ -85,7 +88,8 @@ void main() {
     await AppLocalizations.load(const Locale('en'));
   });
 
-  setUp(() {
+  setUp(() async {
+    await mockPreferences();
     container = ProviderContainer(
       overrides: [profilesProvider.overrideWith(TestProfiles.new)],
     );
@@ -107,6 +111,25 @@ void main() {
       expect(result.revision, 1);
       expect(service.calls, ['init', 'syncState']);
     });
+
+    test(
+      'restores the service generation before syncing shared state',
+      () async {
+        await mockPreferences({
+          'sharedState': '{"setupParams":{"delay-generation":"service-1"}}',
+        });
+        container
+            .read(delayDataSourceProvider.notifier)
+            .setDelay(const Delay(name: 'P', url: 'test', value: 42));
+
+        await lib.start();
+
+        expect(container.read(setupActionProvider), 'service-1');
+        expect(service.syncedState?.setupParams?.delayGeneration, 'service-1');
+        expect(container.read(delayDataSourceProvider)['test']?['P'], 42);
+        expect(service.calls, ['init', 'syncState']);
+      },
+    );
 
     test('coalesces a second start while already connected', () async {
       await lib.start();

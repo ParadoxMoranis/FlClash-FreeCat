@@ -48,13 +48,14 @@ class SetupAction extends _$SetupAction {
   bool get _isRunning => _startTime != null && _startTime!.isBeforeNow;
 
   @override
-  void build() {
+  String build() {
     ref.onDispose(_stopRuntimeTicker);
     ref.listen(appVisibleProvider, (_, _) => _syncRuntimeTicker());
     ref.listen(
       appSettingProvider.select((state) => state.showTrayTitle),
       (_, _) => _syncRuntimeTicker(),
     );
+    return '';
   }
 
   bool get _isTrafficShown =>
@@ -66,16 +67,15 @@ class SetupAction extends _$SetupAction {
   SetupParams get _setupParams => SetupParams(
     selectedMap: ref.read(selectedMapProvider),
     options: ref.read(coreOptionsProvider),
+    delayGeneration: state,
   );
 
   // The selection reaches the Core through changeProxy, not through an apply.
   SetupParams get _appliedParams =>
-      _setupParams.copyWith(selectedMap: const {});
+      _setupParams.copyWith(selectedMap: const {}, delayGeneration: '');
 
   Future<bool> fullSetup() async {
     if (!ref.read(initProvider)) return true;
-    ref.read(proxiesActionProvider.notifier).cancelDelayTests();
-    ref.read(delayDataSourceProvider.notifier).value = {};
     final setupResult = applyProfile(force: true);
     ref.read(logsProvider.notifier).value = FixedList(maxLogsLength);
     ref.read(requestsProvider.notifier).value = FixedList(maxRequestsLength);
@@ -143,9 +143,22 @@ class SetupAction extends _$SetupAction {
   @protected
   Future<DateTime?> serviceStartTime() async => service?.getRunTime();
 
+  Future<void> restoreDelayGeneration() async {
+    if (state.isNotEmpty) {
+      return;
+    }
+    final generation = await preferences.getAppliedDelayGeneration();
+    if (ref.mounted && state.isEmpty) {
+      state = generation;
+    }
+  }
+
   Future<void> initStatus() async {
     if (!globalState.needInitStatus) {
       return;
+    }
+    if (system.isAndroid) {
+      await restoreDelayGeneration();
     }
     _startTime = await serviceStartTime();
     if (_isRunning) {
@@ -758,7 +771,6 @@ class SetupAction extends _$SetupAction {
       return getProfile(setupState: state, patchConfig: realPatchConfig);
     }, title: 'build profile');
     final profileFailed = realProfile == null;
-    final setupParams = _setupParams.copyWith(base: realProfile?.base);
     final inputs = switch (setupState) {
       final state? when !profileFailed => (
         state,
@@ -776,6 +788,9 @@ class SetupAction extends _$SetupAction {
       await preloadInvoke?.call();
       return _SetupTaskResult.completed;
     }
+    ref.read(proxiesActionProvider.notifier).resetDelayTests();
+    state = snowflake.id.toString();
+    final setupParams = _setupParams.copyWith(base: realProfile?.base);
     // Go answers a config it rejects by running its built-in default, which
     // has no proxies, so until this push succeeds no applied config is known.
     _appliedInputs = null;

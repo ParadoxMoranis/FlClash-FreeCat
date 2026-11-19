@@ -231,6 +231,7 @@ SharedState sharedState(Ref ref) {
     localNetworkTip: currentAppLocalizations.localNetworkDeniedTip,
     setupParams: SetupParams(
       selectedMap: selectedMap,
+      delayGeneration: ref.watch(setupActionProvider),
       options: ref.watch(coreOptionsProvider),
     ),
     vpnOptions: ref.watch(vpnOptionsProvider).value,

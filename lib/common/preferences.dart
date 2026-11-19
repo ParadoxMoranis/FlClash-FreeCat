@@ -61,6 +61,28 @@ class Preferences {
     await preferences?.setString('sharedState', json.encode(shareState));
   }
 
+  Future<String> getAppliedDelayGeneration() async {
+    final preferences = await _store.value;
+    final raw = preferences?.getString('sharedState');
+    if (raw == null) {
+      return '';
+    }
+    try {
+      final sharedState = json.decode(raw);
+      if (sharedState is! Map<String, dynamic>) {
+        return '';
+      }
+      final params = sharedState['setupParams'];
+      if (params is! Map<String, dynamic>) {
+        return '';
+      }
+      final generation = params['delay-generation'];
+      return generation is String ? generation : '';
+    } on FormatException {
+      return '';
+    }
+  }
+
   /// The md5 of the config.yaml the Core last accepted, which is also what
   /// the Android service applies when it starts without Flutter.
   Future<String?> getAppliedConfigMd5() async {

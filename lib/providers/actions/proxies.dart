@@ -15,10 +15,12 @@ class _DelayTestTarget {
 typedef _DelayTestBatch = ({List<Proxy> proxies, String? testUrl});
 
 class _DelayTestJob {
-  _DelayTestJob(Iterable<String> keys, this.timeout) : held = keys.toSet();
+  _DelayTestJob(Iterable<String> keys, this.timeout, this.generation)
+    : held = keys.toSet();
 
   final Set<String> held;
   final Duration timeout;
+  final String generation;
   final Set<String> startedOnDispatch = {};
   bool cancelled = false;
 }
@@ -64,6 +66,11 @@ class ProxiesAction extends _$ProxiesAction {
     ref.read(pendingDelayTestsProvider.notifier).clear();
   }
 
+  void resetDelayTests() {
+    cancelDelayTests();
+    ref.read(delayDataSourceProvider.notifier).value = {};
+  }
+
   void _scheduleDelayFlush() {
     _delayFlushTimer ??= Timer(renderThrottleDuration, _flushDelayResults);
   }
@@ -72,7 +79,12 @@ class ProxiesAction extends _$ProxiesAction {
     _delayFlushTimer?.cancel();
     _delayFlushTimer = null;
     if (_bufferedDelays.isNotEmpty) {
-      final delays = List.of(_bufferedDelays);
+      final generation = ref.read(setupActionProvider);
+      final delays = _bufferedDelays
+          .where(
+            (delay) => generation.isEmpty || delay.generation == generation,
+          )
+          .toList();
       _bufferedDelays.clear();
       ref.read(delayDataSourceProvider.notifier).setDelays(delays);
     }
@@ -171,6 +183,10 @@ class ProxiesAction extends _$ProxiesAction {
   }
 
   void setDelay(Delay delay) {
+    final generation = ref.read(setupActionProvider);
+    if (generation.isNotEmpty && delay.generation != generation) {
+      return;
+    }
     _bufferedDelays.add(delay);
     _scheduleDelayFlush();
   }
@@ -400,6 +416,7 @@ class ProxiesAction extends _$ProxiesAction {
     final job = _DelayTestJob(
       targets.map((target) => target.key),
       Duration(milliseconds: ref.read(manualTestTimeoutProvider)),
+      ref.read(setupActionProvider),
     );
     _delayTestJobs.add(job);
     // TaskPool.run starts a task synchronously while it has an idle slot.
@@ -443,7 +460,7 @@ class ProxiesAction extends _$ProxiesAction {
           timeout: job.timeout.inMilliseconds,
         ),
       );
-      if (!job.cancelled) {
+      if (!job.cancelled && job.generation == ref.read(setupActionProvider)) {
         setDelay(delay);
       }
     } catch (error) {

@@ -15,8 +15,22 @@ import (
 
 func init() {
 	mihomoHttp.TLSConfigHook = relaxCertVerify
-	adapter.UrlTestHook = func(url string, name string, delay uint16, timedOut bool) {
-		sendMessage(DelayMessage, &Delay{Url: url, Name: name, Value: delayValue(delay, timedOut)})
+	adapter.UrlTestHook = func(proxy *adapter.Proxy, url string) func(uint16, bool) {
+		state := activeDelayConfig.Load()
+		if state != nil && !state.ready {
+			return nil
+		}
+		return func(delay uint16, timedOut bool) {
+			if !delayTestIsCurrent(proxy, state) {
+				return
+			}
+			sendMessage(DelayMessage, &Delay{
+				Url:        url,
+				Name:       proxy.Name(),
+				Value:      delayValue(delay, timedOut),
+				Generation: delayGenerationValue(state),
+			})
+		}
 	}
 	statistic.DefaultRequestNotify = func(c statistic.Tracker) {
 		notifyProbeRoute(c)

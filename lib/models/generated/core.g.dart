@@ -11,6 +11,7 @@ _SetupParams _$SetupParamsFromJson(Map<String, dynamic> json) => _SetupParams(
       ? null
       : SetupBase.fromJson(json['base'] as Map<String, dynamic>),
   selectedMap: Map<String, String>.from(json['selected-map'] as Map),
+  delayGeneration: json['delay-generation'] as String? ?? '',
   options: CoreOptions.fromJson(json['options'] as Map<String, dynamic>),
 );
 
@@ -18,6 +19,7 @@ Map<String, dynamic> _$SetupParamsToJson(_SetupParams instance) =>
     <String, dynamic>{
       'base': ?instance.base,
       'selected-map': instance.selectedMap,
+      'delay-generation': instance.delayGeneration,
       'options': instance.options,
     };
 
@@ -481,12 +483,14 @@ _Delay _$DelayFromJson(Map<String, dynamic> json) => _Delay(
   name: json['name'] as String,
   url: json['url'] as String,
   value: (json['value'] as num?)?.toInt(),
+  generation: json['generation'] as String? ?? '',
 );
 
 Map<String, dynamic> _$DelayToJson(_Delay instance) => <String, dynamic>{
   'name': instance.name,
   'url': instance.url,
   'value': instance.value,
+  'generation': instance.generation,
 };
 
 _OutboundIpParams _$OutboundIpParamsFromJson(Map<String, dynamic> json) =>

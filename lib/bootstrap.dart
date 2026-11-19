@@ -117,6 +117,11 @@ class Bootstrap {
       overrides: [...appStateOverrides, ...configOverrides],
     );
     globalState.container = container;
+    if (system.isAndroid) {
+      await container
+          .read(setupActionProvider.notifier)
+          .restoreDelayGeneration();
+    }
     container
         .read(dynamicColorProvider.notifier)
         .seed(

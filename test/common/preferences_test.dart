@@ -124,6 +124,38 @@ void main() {
     );
   });
 
+  group('applied delay generation', () {
+    test('reads the generation carried by the service setup params', () async {
+      await preferences.saveShareState(
+        _sharedState.copyWith(
+          setupParams: const SetupParams(
+            selectedMap: {},
+            options: CoreOptions(testUrl: 'test'),
+            delayGeneration: 'service-1',
+          ),
+        ),
+      );
+
+      expect(await preferences.getAppliedDelayGeneration(), 'service-1');
+    });
+
+    test('accepts old shared state and rejects malformed state', () async {
+      expect(await preferences.getAppliedDelayGeneration(), isEmpty);
+      for (final raw in [
+        '{oops',
+        'null',
+        '[]',
+        '{}',
+        '{"setupParams":null}',
+        '{"setupParams":{}}',
+        '{"setupParams":{"delay-generation":1}}',
+      ]) {
+        await store.setString('sharedState', raw);
+        expect(await preferences.getAppliedDelayGeneration(), isEmpty);
+      }
+    });
+  });
+
   test('clearPreferences empties every stored key', () async {
     await preferences.setVersion(9);
     await preferences.saveConfig(const Config(themeProps: defaultThemeProps));

@@ -63,7 +63,7 @@ abstract class _$CommonAction extends $Notifier<void> {
 @ProviderFor(SetupAction)
 final setupActionProvider = SetupActionProvider._();
 
-final class SetupActionProvider extends $NotifierProvider<SetupAction, void> {
+final class SetupActionProvider extends $NotifierProvider<SetupAction, String> {
   SetupActionProvider._()
     : super(
         from: null,
@@ -83,27 +83,27 @@ final class SetupActionProvider extends $NotifierProvider<SetupAction, void> {
   SetupAction create() => SetupAction();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(void value) {
+  Override overrideWithValue(String value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<void>(value),
+      providerOverride: $SyncValueProvider<String>(value),
     );
   }
 }
 
-String _$setupActionHash() => r'255ff2613e1ab59147280625d623b76444f998f3';
+String _$setupActionHash() => r'950891502a8b6541a6966142e79c3b711531db5f';
 
-abstract class _$SetupAction extends $Notifier<void> {
-  void build();
+abstract class _$SetupAction extends $Notifier<String> {
+  String build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref = this.ref as $Ref<void, void>;
+    final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<void, void>,
-              void,
+              AnyNotifier<String, String>,
+              String,
               Object?,
               Object?
             >;
@@ -398,7 +398,7 @@ final class ProxiesActionProvider
   }
 }
 
-String _$proxiesActionHash() => r'2723e856cc5fda623a8a824eff1d2b46b7bdb732';
+String _$proxiesActionHash() => r'462fec13198940cf66e1504bbc84b9ddad55a73b';
 
 abstract class _$ProxiesAction extends $Notifier<void> {
   void build();

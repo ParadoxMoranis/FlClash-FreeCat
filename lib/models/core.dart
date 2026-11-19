@@ -11,6 +11,7 @@ abstract class SetupParams with _$SetupParams {
   const factory SetupParams({
     @JsonKey(includeIfNull: false) SetupBase? base,
     @JsonKey(name: 'selected-map') required Map<String, String> selectedMap,
+    @Default('') @JsonKey(name: 'delay-generation') String delayGeneration,
     required CoreOptions options,
   }) = _SetupParams;
 
@@ -358,8 +359,12 @@ abstract class TestDelayParams with _$TestDelayParams {
 
 @freezed
 abstract class Delay with _$Delay {
-  const factory Delay({required String name, required String url, int? value}) =
-      _Delay;
+  const factory Delay({
+    required String name,
+    required String url,
+    int? value,
+    @Default('') String generation,
+  }) = _Delay;
 
   factory Delay.fromJson(Map<String, Object?> json) => _$DelayFromJson(json);
 }

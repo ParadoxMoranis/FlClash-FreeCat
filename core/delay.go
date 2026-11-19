@@ -17,11 +17,17 @@ const (
 	defaultDelayTestTimeout = 5 * time.Second
 )
 
+type delayConfigState struct {
+	generation string
+	ready      bool
+}
+
 var (
 	delayTestSlots     = make(slots, delayTestConcurrency)
 	anyDelayTestStatus utils.IntRanges[uint16]
 
 	testURL                 atomic.Pointer[string]
+	activeDelayConfig       atomic.Pointer[delayConfigState]
 	missingDelayTestProxyAt atomic.Int64
 )
 
@@ -38,6 +44,18 @@ func currentTestURL() string {
 		return *url
 	}
 	return defaultTestURL
+}
+
+func delayTestIsCurrent(proxy constant.Proxy, state *delayConfigState) bool {
+	return (state == nil || state.ready) && activeDelayConfig.Load() == state &&
+		lookupProxy(proxy.Name()) == proxy && activeDelayConfig.Load() == state
+}
+
+func delayGenerationValue(state *delayConfigState) string {
+	if state == nil {
+		return ""
+	}
+	return state.generation
 }
 
 const (
@@ -71,16 +89,28 @@ func reportMissingDelayTestProxy(name string) {
 	logError("delay test: %q is not part of the applied config", name)
 }
 
-// A nil answer means the test never got a slot, which says nothing about the proxy.
+// A nil answer means a test never got a slot or its config was replaced.
 func handleTestDelay(params *TestDelayParams) *Delay {
 	url := params.TestUrl
 	if url == "" {
 		url = currentTestURL()
 	}
-	result := &Delay{Name: params.ProxyName, Url: url, Value: delayFailed}
+	state := activeDelayConfig.Load()
+	if state != nil && !state.ready {
+		return nil
+	}
+	result := &Delay{
+		Name:       params.ProxyName,
+		Url:        url,
+		Value:      delayFailed,
+		Generation: delayGenerationValue(state),
+	}
 
 	proxy := lookupProxy(params.ProxyName)
 	if proxy == nil {
+		if activeDelayConfig.Load() != state {
+			return nil
+		}
 		reportMissingDelayTestProxy(params.ProxyName)
 		return result
 	}
@@ -93,10 +123,16 @@ func handleTestDelay(params *TestDelayParams) *Delay {
 		return nil
 	}
 	defer delayTestSlots.release()
+	if !delayTestIsCurrent(proxy, state) {
+		return nil
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 	delay, err := proxy.URLTest(ctx, url, anyDelayTestStatus)
+	if !delayTestIsCurrent(proxy, state) {
+		return nil
+	}
 	if err != nil {
 		delay = 0
 	}
