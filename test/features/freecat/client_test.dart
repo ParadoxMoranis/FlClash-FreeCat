@@ -208,7 +208,7 @@ void main() {
           password: 'private-password',
         );
         expect(hosts, [
-          'https://tccdnclient.miaowupaa.com',
+          'https://tccdnclient.miaowuppaa.com',
           'https://115.159.221.23',
           'https://tuc.skyoutdoors.com.cn',
         ]);
