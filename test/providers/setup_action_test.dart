@@ -791,6 +791,47 @@ void main() {
   });
 
   group('updateConfig', () {
+    for (final safe in [false, true]) {
+      test(
+        'FreeCat process matching survives direct updates with safe mode $safe',
+        () async {
+          final core = _MockCoreHandlerInterface();
+          when(() => core.updateConfig(any())).thenAnswer((_) async {});
+          final scopedAction = TestSetupAction();
+          final scoped = ProviderContainer(
+            overrides: [
+              profilesProvider.overrideWith(
+                () => TestProfiles(const [
+                  Profile(
+                    id: 1,
+                    type: ProfileType.freecat,
+                    autoUpdateDuration: Duration.zero,
+                  ),
+                ]),
+              ),
+              currentProfileIdProvider.overrideWithBuild((_, _) => 1),
+              setupActionProvider.overrideWith(() => scopedAction),
+              coreHandlerProvider.overrideWithValue(
+                CoreController.scoped(core),
+              ),
+              safeModeProvider.overrideWithValue(safe),
+            ],
+          );
+          addTearDown(scoped.dispose);
+          scoped.read(setupActionProvider.notifier);
+          await scopedAction.updateConfig();
+          final params =
+              verify(() => core.updateConfig(captureAny())).captured.single
+                  as UpdateParams;
+          expect(params.findProcessMode, FindProcessMode.always);
+          expect(
+            scoped.read(patchClashConfigProvider).findProcessMode,
+            FindProcessMode.off,
+          );
+        },
+      );
+    }
+
     test('safe mode pushes tun disabled even once authorized', () async {
       final core = _MockCoreHandlerInterface();
       when(() => core.updateConfig(any())).thenAnswer((_) async {});
@@ -1584,6 +1625,7 @@ void main() {
             );
         final config = loadYaml(result.yaml) as Map;
         expect(result.base, isNull);
+        expect(config['find-process-mode'], 'always');
         expect(config['proxies'][0]['client-fingerprint'], 'chrome120');
         expect(config['proxies'][0]['server'], '203.0.113.1');
         expect(config['proxies'][0]['sni'], 'example.com');
@@ -1603,9 +1645,33 @@ void main() {
               patchConfig: const PatchClashConfig(globalUa: 'custom-client'),
             );
         expect((loadYaml(custom.yaml) as Map)['global-ua'], 'custom-client');
+        expect((loadYaml(custom.yaml) as Map)['find-process-mode'], 'always');
         verifyNever(() => core.getProfileBase(any()));
       },
     );
+
+    test('ordinary profile process mode follows its settings', () async {
+      final core = _MockCoreHandlerInterface();
+      when(
+        () => core.getProfileBase(any()),
+      ).thenAnswer((_) async => const ProfileBase(config: {}, digest: 'test'));
+      final scoped = ProviderContainer(
+        overrides: [
+          coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+          setupActionProvider.overrideWith(SetupAction.new),
+        ],
+      );
+      addTearDown(scoped.dispose);
+      for (final mode in FindProcessMode.values) {
+        final result = await scoped
+            .read(setupActionProvider.notifier)
+            .getProfile(
+              setupState: nullProfileSetupState.copyWith(profileId: 1),
+              patchConfig: PatchClashConfig(findProcessMode: mode),
+            );
+        expect((loadYaml(result.yaml) as Map)['find-process-mode'], mode.name);
+      }
+    });
 
     test('a profile file leaves its bulk sections in the Core and records '
         'what the Core was handed', () async {

@@ -1,3 +1,9 @@
+## Unreleased
+
+- Correct the first FreeCat panel hostname to `tccdnclient.miaowuppaa.com`, retaining the existing fallback order.
+- FreeCat profiles now use `find-process-mode: always` in both generated configuration and live updates so subscription process rules can match. This source-specific behavior also takes precedence over a saved `off`; ordinary profiles retain their selected mode.
+- Match only known placeholder prefixes at the start of node names, preserving real nodes whose names contain notice or website text.
+
 ## Changes in v0.9.7
 
 - FreeCat subscription requests now use the observed official 3.2.0 subscription User-Agent. The same value supplies FreeCat's default `global-ua`, while an explicit `global-ua` is retained. The panel login/token flow and subscription decryption remain unchanged; the 3.2.0 findings do not establish a new panel User-Agent.

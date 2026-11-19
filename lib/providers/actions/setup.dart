@@ -540,7 +540,9 @@ class SetupAction extends _$SetupAction {
         profileId: profileId,
         rawConfig: rawConfig,
         freecatTlsCompatibility: isFreecat,
-        realPatchConfig: patchConfig,
+        realPatchConfig: isFreecat
+            ? patchConfig.withFreecatProcessMode()
+            : patchConfig,
         overrides: setupState.overrides,
         bypassPrivateRoute: networkSetting.bypassPrivateRoute,
         keepEmptyDnsOverrides: setupState.profileType != ProfileType.custom,
@@ -642,6 +644,9 @@ class SetupAction extends _$SetupAction {
   }
 
   PatchClashConfig _effectivePatchConfig(PatchClashConfig patchConfig) {
+    if (ref.read(currentProfileProvider)?.type == ProfileType.freecat) {
+      patchConfig = patchConfig.withFreecatProcessMode();
+    }
     if (ref.read(safeModeProvider)) {
       return patchConfig.copyWith(
         tun: patchConfig.tun.copyWith(enable: false),

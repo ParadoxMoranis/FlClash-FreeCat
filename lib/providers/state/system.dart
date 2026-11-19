@@ -6,12 +6,18 @@ UpdateParams updateParams(Ref ref) {
     networkSettingProvider.select((state) => state.authentication),
   );
   final options = ref.watch(coreOptionsProvider);
+  final isFreecat = ref.watch(
+    currentProfileProvider.select(
+      (profile) => profile?.type == ProfileType.freecat,
+    ),
+  );
   return ref.watch(
     patchClashConfigProvider.select(
-      (state) => state.toUpdateParams(
-        authentication: authentication.credentials,
-        options: options,
-      ),
+      (state) =>
+          (isFreecat ? state.withFreecatProcessMode() : state).toUpdateParams(
+            authentication: authentication.credentials,
+            options: options,
+          ),
     ),
   );
 }

@@ -777,6 +777,20 @@ void main() {
     });
   });
 
+  test(
+    'FreeCat process defaults leave unrelated settings and source unchanged',
+    () {
+      const original = PatchClashConfig(mixedPort: 8765, keepAliveIdle: 30);
+      final effective = original.withFreecatProcessMode();
+      expect(
+        effective,
+        original.copyWith(findProcessMode: FindProcessMode.always),
+      );
+      expect(original.findProcessMode, FindProcessMode.off);
+      expect(effective.withFreecatProcessMode(), same(effective));
+    },
+  );
+
   group('PatchClashConfig.setupOnly', () {
     UpdateParams liveParams(PatchClashConfig config) => config.toUpdateParams(
       authentication: const [],

@@ -2348,6 +2348,11 @@ extension PatchClashConfigExt on PatchClashConfig {
   T? _picked<T>(GeneralOverrideKey key, T value) =>
       generalOverrideKeys.contains(key) ? value : null;
 
+  PatchClashConfig withFreecatProcessMode() =>
+      findProcessMode == FindProcessMode.off
+      ? copyWith(findProcessMode: FindProcessMode.always)
+      : this;
+
   Map<String, Object?> get generalOverrideJson => _overrideJson(
     toJson(),
     GeneralOverrideKey.values,

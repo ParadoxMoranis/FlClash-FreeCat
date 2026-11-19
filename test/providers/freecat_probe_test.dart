@@ -87,6 +87,48 @@ void main() {
   }
 
   test(
+    'FreeCat process matching survives live patches and source switches',
+    () {
+      container.listen(updateParamsProvider, (_, _) {});
+      expect(
+        container.read(updateParamsProvider).findProcessMode,
+        FindProcessMode.always,
+      );
+      expect(
+        container.read(patchClashConfigProvider).findProcessMode,
+        FindProcessMode.off,
+      );
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update((config) => config.copyWith(logLevel: LogLevel.debug));
+      expect(
+        container.read(updateParamsProvider).findProcessMode,
+        FindProcessMode.always,
+      );
+      container.read(currentProfileIdProvider.notifier).value = 2;
+      expect(
+        container.read(updateParamsProvider).findProcessMode,
+        FindProcessMode.off,
+      );
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update(
+            (config) =>
+                config.copyWith(findProcessMode: FindProcessMode.always),
+          );
+      expect(
+        container.read(updateParamsProvider).findProcessMode,
+        FindProcessMode.always,
+      );
+      container.read(currentProfileIdProvider.notifier).value = 1;
+      expect(
+        container.read(updateParamsProvider).findProcessMode,
+        FindProcessMode.always,
+      );
+    },
+  );
+
+  test(
     'manual group tests and nested delay displays use the official endpoint',
     () async {
       final answer = Completer<Delay>();
